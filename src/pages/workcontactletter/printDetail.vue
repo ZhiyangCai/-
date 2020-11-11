@@ -4,7 +4,7 @@
     <div class="project_form">
       <div class="project_title">{{ projectTitle }}工作联系函</div>
       <div
-        style="height:100%;background:white;margin-top:10px;padding:20px 40px;"
+        style="height:100%;background:white;margin-top:10px;padding:0px 40px;"
       >
         <el-form
           :model="formData"
@@ -17,111 +17,43 @@
         >
           <el-row>
             <el-col :span="24">
-              <el-form-item label="任务名称" prop="letter_name">
-                <el-input v-model="formData.letter_name"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="限定完成时间" prop="limited_time">
-                <!-- value-format="yyyy-MM-dd" -->
-                <el-date-picker
-                  v-model="formData.limited_time"
-                  type="date"
-                  placeholder="请选择签字日期"
-                ></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
               <el-form-item
-                class="personCenter"
-                style="padding-right:30px"
-                label-width="100px"
-                label="责任人"
-                prop="project_execute_dept_name"
+                style="margin:0px;padding:0px;"
+                label-width="100%"
+                label="武汉问道信息技术有限公司应用软件部"
               >
-                <div style="position: relative;">
-                  <el-input
-                    v-model="formData.project_execute_dept_name"
-                    placeholder="请选择项目执行部门/负责人"
-                    :disabled="false"
-                    readonly
-                  ></el-input>
-                  <span
-                    v-if="
-                      formData.project_execute_dept_name != '' //&& !isReadonly
-                    "
-                    class="clear_input_item"
-                    @click="handleUserDelete('project_execute_dept_name')"
-                  >
-                    <span class="el-icon-circle-close"></span>
-                  </span>
-                </div>
-
-                <i
-                  style="position:absolute;right:-30px;top:5px"
-                  class="el-icon-circle-plus add_user_img"
-                  @click="
-                    handleAddUsers('project_execute_dept_name', '责任人', true)
-                  "
-                ></i>
               </el-form-item>
-
-              <!-- <el-form-item style="margin-left:80px" label="责任人" prop="project_code">
-                <el-input v-if="isReadonly" v-model="formData.project_code"></el-input>
-                <el-select v-else v-model="formData.project_id1" filterable placeholder="请选择项目编号" @change="handleSelectProject"
-                  style="width: 100%;">
-                  <el-option v-for="(item,i) in projectOptions" :key="item.project_id+i" :label="item.project_code"
-                    :value="item.project_id">
-                  </el-option>
-                </el-select>
-              </el-form-item> -->
             </el-col>
           </el-row>
-
           <el-row>
-            <el-col :span="12">
-              <el-form-item label="责任单位（部门）" prop="imple_depart">
-                <el-input v-model="formData.imple_depart"></el-input>
+            <el-col :span="24">
+              <el-form-item
+                style="margin:0px;padding:0px;"
+                label="任务名称"
+                prop="project_name"
+              >
+                黄鹤楼科技园工程中心
+                <!-- <el-input
+                  disabled="false"
+                  v-model="formData.contract_code"
+                ></el-input> -->
               </el-form-item>
             </el-col>
           </el-row>
-
-          <el-row style="padding-top: 30px;">
-            <el-col :span="24" style="text-align: right;padding-top:8px;">
-              <el-button size="mini" type="primary" @click="handleAddDetails"
-                >增加
-              </el-button>
-              <el-button size="mini" type="warning" @click="handleDeleteDetails"
-                >删除
-              </el-button>
-            </el-col>
-          </el-row>
-
-          <div
-            class="func_list_item_"
-            style="margin-top:10px;margin-bottom:10px"
-          >
-            <!-- 待实施工作内容 start-->
-            <el-form-item label="" prop="letter_contents">
+          <div v-for="(item, i) in [1, 2]" :key="i">
+            <el-divider>任务发送时间 2020-11-05</el-divider>
+            <div
+              class="func_list_item_"
+              style="margin-top:10px;margin-bottom:10px;"
+            >
+              <!-- 待实施工作内容（只读部分） start-->
               <el-table
                 border
                 ref="multipleTable"
-                :data="formData.letter_contents"
+                :data="tableData"
                 tooltip-effect="dark"
-                style="width: 100%"
-                @selection-change="handleSelectionChange"
+                style="width: 100%;"
               >
-                <el-table-column
-                  header-align="center"
-                  align="center"
-                  type="selection"
-                  width="55"
-                >
-                </el-table-column>
-
                 <el-table-column
                   header-align="center"
                   align="center"
@@ -131,6 +63,13 @@
                 >
                 </el-table-column>
 
+                <!-- <el-table-column
+                  header-align="center"
+                prop="address"
+                label="待实施工作项内容"
+                show-overflow-tooltip>
+              </el-table-column> -->
+
                 <el-table-column
                   header-align="center"
                   prop="name"
@@ -138,144 +77,78 @@
                   align="center"
                 >
                   <!-- <template slot-scope="scope" >            
-                <el-input
-                  contenteditable="true"
-                  placeholder=""/>     
-              </template> -->
+                  <el-input
+                    contenteditable="true"
+                    placeholder=""/>     
+                </template> -->
                   <template slot-scope="scope">
-                    <!-- <p>姓名: {{ scope.row.name }}</p>
-          <p>住址: {{ scope.row.address }}</p> -->
-
-                    <el-input prop="" v-model="scope.row.name" placeholder="" />
+                    <el-input
+                      disabled="false"
+                      v-model="scope.row.name"
+                      placeholder=""
+                    />
                   </template>
                 </el-table-column>
               </el-table>
-            </el-form-item>
+              <!-- 待实施工作内容（只读部分） end-->
 
-            <!-- 描述与附件 -->
-            <div style="margin-top:20px;display:none">
-              <el-row>
-                <el-col :span="24">
-                  <el-form-item label="实际情况描述" prop="project_name">
-                    <el-input
-                      v-model="formData.contract_code"
-                      type="textarea"
-                      rows="4"
-                      :disabled="!isReadonly"
-                      placeholder=""
-                      :autosize="{ minRows: 4 }"
-                    ></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="完成时间">
-                    <el-date-picker
-                      v-model="formData.sign_date"
-                      type="date"
-                      placeholder="请选择签字日期"
-                    ></el-date-picker>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="设计报告：" prop="file_list_attach2">
-                    <div v-if="isReadonly && projectType === 'read'">
-                      <span
-                        class="attach_no_data"
-                        v-if="formData.file_list_attach2.length === 0"
-                        >暂无</span
-                      >
-                      <div v-else>
-                        <div
-                          class="download_file_name"
-                          v-for="(item, i) in formData.file_list_attach2"
-                          :key="'attach_' + i"
-                        >
-                          <span class="el-icon-document"></span>
-                          <a :href="item.url">{{ item.name }}</a>
-                        </div>
-                      </div>
-                    </div>
-                    <el-upload
-                      v-else
-                      ref="upload_attach2"
-                      :disabled="!isReadonly"
-                      class="upload-demo"
-                      :action="uploadUrl"
-                      :auto-upload="false"
-                      :show-file-list="false"
-                      :name="'FILE_CONTENTS'"
-                      multiple
-                      :data="{
-                        bizId: projectId,
-                        uploadType: 'doc01',
-                        prop: 'attach2'
-                      }"
-                      :on-change="handleChangeFile2"
-                    >
-                      <div slot="trigger">
-                        <el-button
-                          size="small"
-                          :disabled="!isReadonly"
-                          type="primary"
-                          style="width: 200px;"
-                          >上传附件</el-button
-                        >
-                        <!--<el-button size="small" :disabled="isReadonly" type="primary" style="width: 100px;">上传</el-button>-->
-                      </div>
-
-                      <div class="file_list">
-                        <el-row
-                          class="file_list_row"
-                          v-for="(file, i) in formData.file_list_attach2"
-                          :key="'file_' + i"
-                        >
-                          <el-col class="file_list_name">
-                            <span class="el-icon-document"></span>
-                            <a :href="file.url">{{ file.file_name }}</a>
-                          </el-col>
-                          <el-col v-if="!isReadonly" class="file_list_delete">
-                            <el-button
-                              type="text"
-                              size="mini"
-                              @click="
-                                handleDeleteFile(
-                                  file.id,
-                                  file.file_name,
-                                  'attach2'
-                                )
-                              "
-                            >
-                              <span class="el-icon-close"></span>
-                            </el-button>
-                          </el-col>
-                        </el-row>
-                      </div>
-                    </el-upload>
-                  </el-form-item>
-                </el-col>
-              </el-row>
+              <!-- 实施情况描述start -->
+              <el-table
+                :data="implementationTableData"
+                border
+                style="width: 100%;margin-top:20px;"
+              >
+                <el-table-column
+                  header-align="center"
+                  align="center"
+                  type="index"
+                  label="序号"
+                  width="50"
+                >
+                </el-table-column>
+                <!-- min-width="300" -->
+                <el-table-column
+                  align="center"
+                  header-align="center"
+                  prop="a"
+                  label="实施情况描述"
+                >
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  header-align="center"
+                  prop="b"
+                  label="责任人"
+                  width="180"
+                >
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  header-align="center"
+                  prop="c"
+                  label="完成时间"
+                >
+                </el-table-column>
+              </el-table>
+              <!-- 实施情况描述end -->
             </div>
-            <!-- 底部按钮 -->
-            <el-row>
-              <el-col :span="24">
-                <div style="text-align:center;margin-top:30px">
-                  <el-button
-                    type="primary"
-                    v-loading.fullscreen.lock="this.loading"
-                    @click="onSave"
-                    >保存</el-button
-                  >
-                  <el-button @click="onSubmit" type="warning">提交</el-button>
-                </div>
-              </el-col>
-            </el-row>
-
-            <!-- 待实施工作内容 end-->
           </div>
+          <el-divider></el-divider>
+
+          <p style="text-align:right;font-size:14px">
+            新型烟草制品工程中心
+          </p>
+          <p style="text-align:right;font-size:14px">2020年11月3日</p>
+
+          <!-- 底部按钮start -->
+          <el-row>
+            <el-col :span="24">
+              <div style="text-align:center;margin:30px">
+                <el-button type="primary">打印</el-button>
+              </div>
+            </el-col>
+          </el-row>
+          <!-- 底部按钮end -->
         </el-form>
       </div>
     </div>
@@ -317,21 +190,35 @@ import dept_user_index from "../project_dept_user/dept_user_index"; //人员选�
 import QRCode from "qrcodejs2";
 
 export default {
-  //name: "designer_report_confirm",
-  name: "createWorkcontact",
+  name: "printDetail",
   props: ["projectId", "projectType", "billCode"],
   components: {
     dept_user_index
   },
   data() {
     return {
-      /*选中的工作项*/
+      //实施情况描述表格数据
+      implementationTableData: [
+        {
+          a: "工作联系函需求调研",
+          b: "张三",
+          c: "2020-11-04"
+        }
+      ],
+      tableData: [
+        {
+          id: 1,
+          name: "工作内容1"
+        },
+        {
+          id: 2,
+          name: "工作内容2"
+        }
+      ],
       multipleSelection: [],
 
       /** 校验信息 */
-      showMessage: true,
-
-      loading: false, //接口加载状态 true 加载中 ，false 加载完
+      showMessage: false,
 
       /** 合同信息 */
       contract_id: "", //合同id
@@ -344,26 +231,19 @@ export default {
       dialogVisible: false,
       dialogTitle: "", //dialog标题
       selectItem: {}, //dialog弹框时赋值
-      isCheckBtn: false, //是否多选
+      isCheckBtn: true, //是否多选
       checkedList: [], //已选人员
 
       state: "1", //表单状态
       projectTitle: "", //表单抬头
       projectCode: "", //表单编码
-      isReadonly: false, //projectType为read时为 true，（add,read）为 false
+      isReadonly: true, //projectType为read时为 true，（add,read）为 false
       // isReadonly: false, //projectType为read时为 true，（add,read）为 false
 
       uploadUrl: "transfer/api/dsm/file/upload", //上传url
 
       /** 表单参数 */
       formData: {
-        /*工作联系函基本信息*/
-        letter_name: "", //工作联系函任务名称
-        letter_contents: [], //工作事项
-        limited_time: "", //限定完成时间
-        imple_uses: [], //责任人
-        imple_depart: "", //责任部门
-
         /** 项目基本信息 */
         project_id: "", //项目id
         project_id1: "", //项目id
@@ -392,45 +272,6 @@ export default {
       },
       /** 表单校验 */
       rules: {
-        letter_name: [
-          {
-            required: true,
-            message: "请填写任务名称",
-            trigger: "blur"
-          }
-        ],
-        letter_contents: [
-          {
-            type: "array",
-            required: true,
-            message: "请填写工作事项",
-            trigger: "blur"
-          }
-        ],
-        limited_time: [
-          {
-            type: "date",
-            // trigger: "change",
-            trigger: "blur",
-            required: true,
-            message: "请选择限定完成时间"
-          }
-        ],
-        imple_depart: [
-          {
-            required: true,
-            trigger: "blur",
-
-            message: "请填写责任单位（部门）"
-          }
-        ],
-        project_execute_dept_name: [
-          {
-            required: true,
-            message: "请选择责任人"
-          }
-        ],
-        //--------------------------------分隔符------------------------------------
         project_name: [
           {
             required: false,
@@ -455,12 +296,12 @@ export default {
             message: "请在合同名称重新选择合同"
           }
         ],
-        // project_execute_dept_name: [
-        //   {
-        //     required: false,
-        //     message: "请选择项目执行部门/负责人"
-        //   }
-        // ],
+        project_execute_dept_name: [
+          {
+            required: false,
+            message: "请选择项目执行部门/负责人"
+          }
+        ],
         biz_comp_dept_name: [
           {
             required: false,
@@ -533,7 +374,6 @@ export default {
     } else {
       this.isReadonly = true;
     }
-
     this.getProjectListData();
 
     if (this.projectType !== "add") {
@@ -541,105 +381,17 @@ export default {
     }
   },
   methods: {
-    /*------提交事件------*/
-    onSubmit() {
-      //this.$router.push({ path: "/printDetail", query: { stage: "" } });
-    },
-
-    /*------保存事件-----*/
-    onSave() {
-      //alert(JSON.stringify(this.checkedList));
-      //console.log("letter_contents:------", this.formData.letter_contents);
-
-      //;
-      this.$refs.formRef.validate(valid => {
-        if (valid) {
-          if (this.formData.letter_contents.length > 0) {
-            var contents = this.formData.letter_contents;
-            for (var i = 0; i < contents.length; i++) {
-              if (contents[i].name.trim() === "") {
-                this.$message({
-                  message: "工作项内容并不能为空！",
-                  type: "warning"
-                });
-                return;
-              }
-            }
-          }
-
-          /*------执行保存操作------*/
-          var date = this.moment(this.formData.limited_time).format(
-            "YYYY-MM-DD HH:mm:ss"
-          );
-          this.formData.limited_time = date;
-
-          let checkedList = this.checkedList; //责任人
-          if (checkedList.length > 0) {
-            for (var i = 0; i < checkedList.length; i++) {
-              this.formData.imple_uses.push(checkedList[i].user_id);
-            }
-          }
-          let letter_contents = []; //工作事项
-          if (this.formData.letter_contents.length > 0) {
-            for (var i = 0; i < this.formData.letter_contents.length; i++) {
-              letter_contents.push(this.formData.letter_contents[i].name);
-            }
-          }
-
-          let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_save";
-          obj.params = {
-            data: {
-              row: [
-                {
-                  letter_name: this.formData.letter_name,
-                  letter_contents: letter_contents,
-                  limited_time: this.formData.limited_time,
-                  imple_uses: this.formData.imple_uses, //["99100774", "99100778"],
-                  imple_depart: this.formData.imple_depart,
-                  loggedUser: {
-                    path: "1/S00000000000003/S00000000012424",
-                    weight: "1",
-                    id: this.GLOBAL.userCode
-                  }
-                }
-              ]
-            },
-            head: {
-              msg_code: "work_letter_save",
-              msg_id: "work_letter_save",
-              request_time: "",
-              source_sys: "prodsm",
-              service_class: "WorkLetter",
-              target_sys: "MOBILE",
-              user_id: "admin",
-              user_key: "admin"
-            }
-          };
-
-          this.loading = true;
-          this.requestDrmService(obj, this)
-            .then(res => {
-              this.loading = false;
-              console.log("保存成功：----", res);
-            })
-            .catch(err => {
-              console.log(err);
-            });
-        }
-      });
-    },
     //增加一行表格
     handleAddDetails() {
-      if (this.formData.letter_contents == undefined) {
-        this.formData.letter_contents = new Array();
+      if (this.tableData == undefined) {
+        this.tableData = new Array();
       }
       let obj = {};
-      obj.id = this.formData.letter_contents.length + 1;
+      obj.id = this.tableData.length + 1;
       obj.name = "";
-      //if ((obj, name.trim() && obj.name.trim() !== "")) {
-      this.formData.letter_contents.push(obj);
-      //}
+      obj.address = "";
+
+      this.tableData.push(obj);
     },
     //删除选中的表格
     handleDeleteDetails() {
@@ -649,12 +401,9 @@ export default {
         });
       } else {
         for (var i = 0; i < this.multipleSelection.length; i++) {
-          for (var j = 0; j < this.formData.letter_contents.length; j++) {
-            if (
-              this.multipleSelection[i].id ===
-              this.formData.letter_contents[j].id
-            ) {
-              this.formData.letter_contents.splice(j, 1);
+          for (var j = 0; j < this.tableData.length; j++) {
+            if (this.multipleSelection[i].id === this.tableData[j].id) {
+              this.tableData.splice(j, 1);
             }
           }
         }
@@ -664,6 +413,7 @@ export default {
     //点击复选框的事件
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      alert("点击checkbox选中的内容：" + JSON.stringify(val));
     },
 
     /** 项目基本信息-获取项目列表 */
@@ -1026,16 +776,15 @@ export default {
     handleUserDelete(prop) {
       this.formData[prop] = "";
       this.formData[prop + "_ids"] = [];
-      this.checkedList = []; //清空选择的责任人
     },
     /** 选择人员弹框 */
-    handleAddUsers(prop, name, checkItem = false) {
+    handleAddUsers(prop, name, checkItem = true) {
       this.checkedList = this.formData[prop + "_ids"];
       this.selectItem.name = name;
       this.selectItem.prop = prop;
       this.dialogTitle = name + "人员选择";
 
-      //this.isCheckBtn = checkItem;
+      this.isCheckBtn = checkItem;
       this.dialogVisible = true;
     },
     /** 选择人员确认 */
@@ -1069,9 +818,6 @@ export default {
       checkStr = checkStr.substr(0, checkStr.length - 1);
       this.formData[this.selectItem.prop] = checkStr;
       this.formData[this.selectItem.prop + "_ids"] = arrList;
-      //选择的责任人
-      this.checkedList = arrList;
-      //this.project_execute_dept_name = checkStr;
     },
     /** 表单保存 */
     saveFormData() {
@@ -1184,11 +930,11 @@ export default {
         });
     },
     /** 保存 */
-    // onSubmit() {
-    //   // this.state = '1';
-    //   this.$refs.formRef.clearValidate();
-    //   this.checkProjectSelect("1");
-    // },
+    onSubmit() {
+      // this.state = '1';
+      this.$refs.formRef.clearValidate();
+      this.checkProjectSelect("1");
+    },
     /** 推送至审核人员 */
     handleSendToJudge() {
       //推送到确认人
@@ -1258,7 +1004,7 @@ export default {
   font-size: 25px;
   padding: 10px 0;
   background: white;
-  color: #409eff;
+  /* color: #409eff; */
 }
 #designer_report_confirm {
   height: 100%;

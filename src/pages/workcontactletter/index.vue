@@ -5,6 +5,7 @@
       <!-- @tab-click="handleLoad" 点击头部选项卡的时候刷新页面-->
 
       <el-tabs
+        @tab-click="handleLoad"
         v-model="activeName"
         style="height: 100%;background:white;"
         @tab-remove="removeTab"

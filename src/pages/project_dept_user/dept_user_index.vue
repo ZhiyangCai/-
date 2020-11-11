@@ -348,6 +348,10 @@ export default {
         })
         .catch(err => {
           this.loading = false;
+          this.$message({
+            type: "error",
+            message: "获取数据失败"
+          });
           console.log(err);
         });
     },
@@ -392,6 +396,11 @@ export default {
           }
         })
         .catch(err => {
+          this.loading = false;
+          this.$message({
+            type: "error",
+            message: "获取数据失败"
+          });
           console.log(err);
         });
     },
