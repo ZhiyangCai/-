@@ -1,0 +1,824 @@
+body {
+  font: 12px "microsoft yahei", "Times New Roman";
+}
+a {
+  text-decoration: none;
+  color: #409eff;
+}
+body .el-table th.gutter {
+  display: table-cell !important;
+}
+
+#project_history .history_dialog .el-dialog {
+  margin-top: 10% !important;
+  height: 350px;
+}
+
+#project_history .history_dialog .el-dialog__body {
+  overflow: auto;
+}
+
+.is_check_item {
+  border: 1px solid #dcdfe6;
+  padding: 5px 10px;
+  border-radius: 4px;
+  min-height: 76px;
+  line-height: 1.5em;
+  font-size: 13px;
+  background-color: #f5f7fa;
+  color: #666666;
+}
+
+.judge_name_item {
+  cursor: not-allowed;
+}
+
+.el-input.is-disabled .el-input__inner {
+  color: #666666;
+}
+
+.el-checkbox__input.is-disabled + span.el-checkbox__label {
+  color: #666666;
+}
+
+.el-radio__input.is-disabled + span.el-radio__label {
+  color: #666666;
+}
+
+.el-textarea.is-disabled .el-textarea__inner {
+  color: #666666;
+}
+
+.judge_name_item i {
+  font-weight: bold;
+  padding: 0 5px;
+  color: #409eff;
+  font-size: 20px;
+}
+
+#project_dept_user .el-cascader-menu__list.is-empty {
+  display: none;
+}
+
+#project_dept_user_radio .el-cascader-menu__list.is-empty {
+  display: none;
+}
+
+.el-col {
+  position: relative;
+}
+
+.el-input__inner {
+  padding: 0 25px 0 15px;
+}
+
+/*.el-textarea__inner {*/
+/*  padding: 5px 25px 5px 15px;*/
+/*}*/
+
+#home .el-tabs__header {
+  margin-left: 20px;
+  margin-bottom: 0;
+  width: calc(100% - 40px);
+}
+
+#home .el-tabs__content {
+  height: calc(100% - 40px);
+  /*overflow: auto;*/
+}
+
+#home .el-tab-pane {
+  height: 100%;
+  /*height: calc(100% - 25px);*/
+}
+
+#home .el-tabs__nav-prev,
+.el-tabs__nav-next {
+  /*line-height: 36px;*/
+  /*border: 1px solid #DCDFE6;*/
+}
+
+#project_history .el-form-item__label {
+  padding: 0;
+}
+
+#project_history .el-form-item--mini.el-form-item {
+  margin-bottom: 0;
+  padding: 5px 0;
+}
+
+#project_history .el-table th {
+  color: white;
+  background-color: #409eff;
+}
+
+#project_history .el-table th .cell {
+  line-height: 15px;
+  font-weight: bold;
+}
+
+#project_history .el-table td .cell {
+  line-height: 15px;
+}
+
+#project_history .gutter {
+  background-color: white;
+}
+
+.project_form {
+  padding: 0 10% 0 3%;
+}
+
+.project_form .project_title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 25px;
+  line-height: 60px;
+  padding: 10px 0;
+}
+
+.project_form .project_row_title {
+  border-bottom: 2px solid #e4e7ed;
+  line-height: 30px;
+}
+
+.project_form .project_row_title .head {
+  font-weight: bold;
+  padding-left: 15px;
+  border-bottom: 2px solid #409eff;
+  width: 150px;
+}
+
+.project_form .project_row_title .head_right {
+  text-align: right;
+  font-size: 14px;
+  padding-right: 10px;
+}
+
+.project_form .project_row_title .head_right span {
+  font-weight: 500;
+}
+
+.project_form .project_basic_msg {
+  margin: 15px 0;
+}
+
+.project_form .el-date-editor.el-input,
+.el-date-editor.el-input__inner {
+  width: 100%;
+}
+
+.project_form .el-form-item .el-checkbox {
+  width: 100%;
+}
+
+.project_form .el-form-item .el-upload {
+  position: relative;
+  width: 100%;
+  text-align: left;
+}
+
+.project_form .el-form-item__label {
+  color: #323233;
+  font-weight: 500;
+}
+
+.form_line_height_item .el-form-item__label {
+  line-height: 16px;
+}
+
+.form_line_height_default .el-form-item__label {
+  line-height: 32px;
+}
+
+.el-form-item__content a {
+  text-decoration: underline;
+  color: #0066cc;
+  cursor: pointer;
+}
+
+.el-dialog {
+  margin-top: 5% !important;
+  height: 80%;
+}
+
+.el-dialog__header {
+  padding: 0;
+  line-height: 45px;
+  background-color: #409eff;
+  color: white;
+}
+
+.el-dialog__header .active:hover {
+  background-color: #f56c6c;
+}
+
+.el-dialog__body {
+  padding: 0;
+  height: calc(100% - 95px);
+}
+
+.no_footer .el-dialog__body {
+  height: calc(100% - 45px);
+}
+
+.el-dialog__footer {
+  padding: 10px;
+  border-top: 1px solid #dcdfe6;
+}
+
+.el-icon-date {
+  color: #409eff;
+  font-weight: bold;
+}
+
+.add_user_img {
+  font-size: 20px;
+  color: #409eff;
+  cursor: pointer;
+}
+
+.add_user_img:hover {
+  opacity: 0.7;
+}
+
+.sign_div {
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 0 10px;
+  min-height: 30px;
+  font-size: 13px;
+  background-color: #f5f7fa;
+  cursor: not-allowed;
+  color: #666666;
+}
+
+.sign_item {
+  font-size: 20px;
+  font-weight: bold;
+  color: #409eff;
+}
+
+.attach_no_data {
+  color: #999999;
+}
+
+.process_bg {
+  background-color: #f2f2f2;
+  color: white;
+}
+
+.process_bg1 {
+  background-color: #0167b6;
+}
+
+.process_bg2 {
+  background-color: #4ca3f3;
+}
+
+.process_bg3 {
+  background-color: #4fc3ba;
+}
+
+.process_bg4 {
+  background-color: #4faf4e;
+}
+
+.process_bg5 {
+  background-color: #a5a52a;
+}
+
+.process_bg6 {
+  background-color: #a08d63;
+}
+
+.process_bg7 {
+  background-color: #639fa0;
+}
+
+.process_step_bg0 {
+  background: url("../imgs/process_icon1.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: white;
+}
+
+.process_step_bg1 {
+  background: url("../imgs/process_icon2.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: white;
+}
+
+.process_step_bg2 {
+  background: url("../imgs/process_icon3.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: white;
+}
+
+.process_step_bg3 {
+  background: url("../imgs/process_icon4.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: white;
+}
+
+.process_step_bg4 {
+  background: url("../imgs/process_icon5.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: white;
+}
+
+.process_step_bg5 {
+  background: url("../imgs/process_icon6.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: white;
+}
+
+.process_step_bg6 {
+  background: url("../imgs/process_icon7.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: white;
+}
+
+.process_step_bg7 {
+  background: url("../imgs/process_icon8.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: white;
+}
+
+.process_step_bg8 {
+  background: url("../imgs/process_icon9.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: #999999;
+}
+
+.process_step_bg9 {
+  background: url("../imgs/process_icon10.png") no-repeat center center;
+  background-size: 100% 100%;
+  color: #999999;
+}
+
+.process_arrow_bg0 {
+  background: url("../imgs/process_arrow_icon1.png") no-repeat center center;
+  background-size: 100% 100%;
+}
+
+.process_arrow_bg1 {
+  background: url("../imgs/process_arrow_icon2.png") no-repeat center center;
+  background-size: 100% 100%;
+}
+
+.process_arrow_bg2 {
+  background: url("../imgs/process_arrow_icon3.png") no-repeat center center;
+  background-size: 100% 100%;
+}
+
+.process_arrow_bg3 {
+  background: url("../imgs/process_arrow_icon4.png") no-repeat center center;
+  background-size: 100% 100%;
+}
+
+.process_arrow_bg4 {
+  background: url("../imgs/process_arrow_icon5.png") no-repeat center center;
+  background-size: 100% 100%;
+}
+
+/** TODO print */
+.project_form1 {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 14px;
+  padding-top: 20px;
+}
+
+.project_form1 .project_title1 {
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  width: 100%;
+}
+
+.project_code1 {
+  font-size: 14px;
+}
+
+.form_table {
+  padding-bottom: 10px;
+  font-size: 14px;
+}
+
+.form_table .td_label {
+  width: 90px;
+  text-align: center;
+  padding: 5px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.form_table .td_label1 {
+  width: 90px;
+  padding: 5px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.td_text {
+  font-size: 14px;
+  padding: 5px;
+  word-break: break-word;
+  line-height: 1.5em;
+  font-family: "microsoft yahei SimSun";
+}
+
+.form_table table {
+  width: 100%;
+  font-size: 14px;
+  border: 1px solid #666666;
+}
+
+.form_table table tr td {
+  font-size: 14px;
+  border-bottom: 1px solid #666666;
+  border-right: 1px solid #666666;
+}
+
+.form_table table tr:last-child td {
+  border-bottom-width: 0;
+}
+
+.form_table table tr td:last-child {
+  border-right-width: 0;
+}
+
+.form_sub_table {
+  width: 100%;
+  font-size: 14px;
+  border-width: 1px 0 0 0 !important;
+}
+
+.form_sub_table tr td {
+  font-size: 14px;
+  padding: 5px;
+  border-bottom: 1px solid #666666;
+  border-right: 1px solid #666666;
+}
+
+.form_sub_table tr th {
+  font-size: 14px;
+  text-align: center;
+  padding: 5px;
+  font-weight: 400;
+  border-bottom: 1px solid #666666;
+  border-right: 1px solid #666666;
+  min-width: 80px;
+}
+
+.form_sub_table tr:last-child td,
+th {
+  border-bottom-width: 0;
+}
+
+.form_sub_table tr th:last-child {
+  border-right-width: 0;
+}
+
+.form_sub_table tr td:last-child {
+  border-right-width: 0;
+}
+
+.form_sub_table3 tr th {
+  font-size: 14px;
+  text-align: center;
+  padding: 5px;
+  font-weight: 400;
+  border-bottom: 1px solid #666666;
+  border-right: 1px solid #666666;
+  min-width: 80px;
+}
+
+.form_sub_table3 tr:last-child td,
+th {
+  border-bottom-width: 0;
+}
+
+.form_sub_table3 tr th:last-child {
+  border-right-width: 0;
+}
+
+.form_sub_table3 tr td:last-child {
+  border-right-width: 0;
+}
+
+.form_sub_table1 {
+  width: 100%;
+  border-width: 0 !important;
+}
+
+.form_sub_table1 tr td:first-child {
+  border-width: 0;
+  text-align: right;
+}
+
+.form_sub_table1 tr td:last-child {
+  border-width: 0;
+}
+
+.form_sub_table2 {
+  width: 100%;
+  border-width: 0 !important;
+}
+
+.form_sub_table2 tr td:first-child {
+  border-width: 0 1px 0 0;
+}
+
+.form_sub_table2 tr td:last-child {
+  border-width: 0;
+}
+
+.col_checkbox_item {
+  width: calc(100% - 100px);
+  height: 100%;
+}
+
+.row_border_left {
+  border-left: 1px solid #666666 !important;
+}
+
+.row_border_right {
+  border-right: 1px solid #666666 !important;
+}
+
+.row_border_bottom {
+  border-bottom: 1px solid #666666 !important;
+}
+
+.check_desc {
+  font-size: 14px;
+  height: 60px;
+}
+
+.print_check {
+  position: absolute;
+  font-size: 20px;
+  left: 35px;
+  z-index: 4;
+}
+
+.print_radio {
+  position: absolute;
+  font-size: 20px;
+  z-index: 4;
+  right: calc(50% - 50px);
+}
+
+.text_title {
+  font-size: 14px;
+  padding: 5px 30px;
+  font-weight: bold;
+}
+
+.text_bold {
+  font-weight: bold;
+  font-family: Microsoft YaHei SimSun, Arial, sans-serif;
+}
+
+.td_time_left {
+  font-size: 14px;
+  padding: 5px 30px;
+  border-right-width: 0 !important;
+}
+
+.td_time_right {
+  font-size: 14px;
+  text-align: right;
+  padding: 5px;
+  width: 180px;
+}
+
+#dept_user_index .el-button--mini {
+  padding: 6px;
+}
+
+#dept_user_index .search_bar .iconfont {
+  font-size: 13px;
+}
+
+#dept_user_index .el-table--mini td {
+  padding: 2px 0;
+}
+
+#dept_user_index .el-table th {
+  background-color: #f7f7f7;
+}
+
+#dept_user_index .el-table th .cell {
+  color: #333333;
+}
+
+#dept_user_index .el-tree > .el-tree-node {
+  min-width: 100%;
+  display: inline-block;
+}
+
+.clear_input_item {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0 5px;
+  color: #c1c4cb;
+  cursor: pointer;
+}
+
+.clear_input_item:hover {
+  color: #666666;
+}
+
+.clear_textarea_item .el-icon-error {
+  font-size: 20px;
+  cursor: pointer;
+  color: #f56c6c;
+}
+
+.clear_textarea_item .el-icon-error:hover {
+  opacity: 0.7;
+}
+
+.warning_item {
+  font-size: 12px;
+  color: #999999;
+}
+
+.start_time .el-form-item__label {
+  display: flex;
+  padding-left: 38px;
+}
+
+.file_list {
+  padding-top: 10px;
+}
+
+.file_list_row {
+  line-height: 28px;
+  font-size: 13px;
+  padding: 0 5px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.file_list_name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: calc(100% - 30px);
+}
+
+.file_list_name span {
+  padding-right: 5px;
+  color: #999999;
+}
+
+.file_list_name a {
+  color: #323233;
+}
+
+.file_list_name a:hover {
+  color: #0066cc;
+}
+
+.file_list_delete {
+  width: 30px;
+  text-align: right;
+  display: none;
+}
+
+.file_list_row:hover {
+  background-color: #f5f7fa;
+}
+
+.file_list_row:hover .file_list_delete {
+  display: block;
+}
+
+.download_file_name {
+  border-radius: 4px;
+  padding: 0 5px;
+  font-size: 13px;
+  line-height: 28px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+}
+
+.download_file_name:hover {
+  background-color: #f5f7fa;
+}
+
+.download_file_name span {
+  padding-right: 5px;
+  color: #999999;
+}
+
+.download_file_name a {
+  color: #323233;
+}
+
+.download_file_name a:hover {
+  color: #0066cc;
+}
+
+.draw_share_tooltip {
+  max-width: 200px;
+  opacity: 0.7;
+  line-height: 20px;
+}
+
+.qrcode_td {
+  width: 100px;
+  height: 100px;
+  padding: 5px 0;
+}
+
+.sign_date_padding {
+  padding-left: 15px;
+}
+
+.sign_suggest_div {
+  min-height: 80px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 0 10px;
+  font-size: 13px;
+  background-color: #f5f7fa;
+  cursor: not-allowed;
+  color: #666666;
+}
+
+.sign_suggest_msg {
+  padding: 5px 0;
+  line-height: 1.5em;
+}
+
+.rule_item {
+  color: #f56c6c;
+}
+
+/** 功能清单 start**/
+.func_list_item .custom-tree-node-head {
+  text-align: center;
+  line-height: 40px;
+  background-color: #f2f2f2;
+  color: #606266;
+  font-weight: bold;
+}
+
+.func_list_item .custom-tree-node-middle {
+  min-height: 20px;
+  text-align: left;
+  white-space: initial;
+  padding: 7px 0 7px 10px;
+  font-size: 12px;
+}
+
+.func_list_item .custom-tree-node-middle .el-icon-close {
+  font-size: 14px;
+  font-weight: bold;
+  color: #606266;
+}
+
+.func_list_item .sign_merge_item .el-icon-close {
+  font-size: 14px;
+  font-weight: bold;
+  color: #606266;
+}
+
+.func_list_item .el-table tr td:nth-child(1) .cell {
+  display: flex;
+}
+
+.func_list_item .el-table tr th {
+  background-color: #f2f2f2;
+  font-size: 14px;
+  color: #606266;
+}
+
+.func_list_item .first_level_cell {
+  background-color: #f0f7fd;
+}
+
+.first_level_cell .sign_merge_item {
+  background-color: white;
+  vertical-align: top;
+}
+
+.func_list_item .el-tree-node__content {
+  height: auto;
+  min-height: 44px;
+  border-top: 1px solid #ebeef5;
+}
+
+.func_list_item .el-tree > .el-tree-node > .el-tree-node__content {
+  background-color: #f0f7fd;
+}
+
+/** 功能清单 end**/

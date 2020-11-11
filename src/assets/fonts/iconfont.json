@@ -1,0 +1,58 @@
+{
+  "id": "1761682",
+  "name": "IT项目评审",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "348476",
+      "name": "file-text-o",
+      "font_class": "filetexto",
+      "unicode": "eabc",
+      "unicode_decimal": 60092
+    },
+    {
+      "icon_id": "348489",
+      "name": "folder",
+      "font_class": "folder",
+      "unicode": "eac9",
+      "unicode_decimal": 60105
+    },
+    {
+      "icon_id": "348516",
+      "name": "folder-open",
+      "font_class": "folderopen",
+      "unicode": "eae4",
+      "unicode_decimal": 60132
+    },
+    {
+      "icon_id": "11753455",
+      "name": "右箭头",
+      "font_class": "V",
+      "unicode": "e6d7",
+      "unicode_decimal": 59095
+    },
+    {
+      "icon_id": "1898758",
+      "name": "floppy-o",
+      "font_class": "floppy-o",
+      "unicode": "e696",
+      "unicode_decimal": 59030
+    },
+    {
+      "icon_id": "750737",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "9921744",
+      "name": "icon-GIS_统计查询",
+      "font_class": "icon-GIS_tongjichaxun",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    }
+  ]
+}
