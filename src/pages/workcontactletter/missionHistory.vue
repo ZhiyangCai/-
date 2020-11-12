@@ -628,7 +628,9 @@ export default {
           closable: true,
           project_id: rowData.ID,
           bill_code: "rowData.TYPE", //rowData.TYPE,
-          type: type
+          type: type,
+          /*--------------分隔符-----------------*/
+          letter_id: rowData.letter_id
         };
         obj_params.title = title; //+ rowData.PROJECT_VIEW_TYPE_NAME;
         if (rowData.TYPE === "8" || rowData.TYPE === "9") {

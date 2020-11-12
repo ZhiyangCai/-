@@ -408,7 +408,7 @@ import QRCode from "qrcodejs2";
 
 export default {
   name: "workDetail",
-  props: ["projectId", "projectType", "billCode"],
+  props: ["projectId", "projectType", "billCode", "letter_id"],
   components: {
     dept_user_index
   },
@@ -601,8 +601,7 @@ export default {
     }
   },
   mounted() {
-    alert(this.bill_Code);
-    this.projectTitle = this.$parent.$parent.$parent.projectTitle;
+    this.projectTitle = this.letter_id; // this.$parent.$parent.$parent.projectTitle;
     this.projectCode = this.$parent.$parent.$parent.getProjectCode(
       this.billCode
     ).label;
@@ -735,10 +734,34 @@ export default {
     getFormData() {
       let obj = {};
       obj.params = {
-        id: this.projectId
+        data: {
+          row: [
+            {
+              letter_id: this.letter_id,
+
+              loggedUser: {
+                path: "1/S00000000000003/S00000000012424",
+                weight: "1",
+                id: this.GLOBAL.userCode
+              }
+            }
+          ]
+        },
+        head: {
+          msg_code: "work_letter_detail",
+          msg_id: "work_letter_detail",
+          request_time: "",
+          source_sys: "prodsm",
+          service_class: "WorkLetter",
+          target_sys: "MOBILE",
+          user_id: "admin",
+          user_key: "admin"
+        }
       };
-      obj.serviceRoot = "project/designReportByIdQuery";
-      obj.baseURL = "/itmsdrm";
+      // obj.serviceRoot = "project/designReportByIdQuery";
+      // obj.baseURL = "/itmsdrm";
+      obj.serviceRoot = "WorkLetter/work_letter_detail";
+
       this.requestDrmService(obj, this)
         .then(res => {
           if (res.resultCode === "0") {

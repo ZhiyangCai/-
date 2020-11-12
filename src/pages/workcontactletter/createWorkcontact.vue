@@ -298,7 +298,6 @@ export default {
         ],
         project_execute_dept_name: [
           {
-            trigger: "click",
             required: true,
             message: "请选择责任人"
           }

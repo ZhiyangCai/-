@@ -39,6 +39,7 @@
             :testerList="testerList"
             :subId="tab.subId"
             :contractStepList="contractStepList"
+            :letter_id="tab.letter_id"
             style="height: 100%;overflow: auto;"
           >
           </component>
