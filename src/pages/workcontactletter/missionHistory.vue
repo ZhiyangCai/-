@@ -94,13 +94,15 @@
                 <div style="white-space: wrap;">
                   <!-- 测试 -->
                   <el-button
-                    @click="handleClick(scope.row, '1')"
+                    style="margin:5px;"
+                    @click="handleClick(scope.row, '查看')"
                     type="primary"
                     size="mini"
                     plain
                     >查看</el-button
                   >
                   <el-button
+                    style="margin:5px;"
                     v-if="scope.row.letter_status === '草稿'"
                     type="primary"
                     size="mini"
@@ -109,30 +111,37 @@
                     >删除
                   </el-button>
                   <el-button
+                    style="margin:5px;"
                     v-if="scope.row.letter_status === '已回复'"
                     type="primary"
                     size="mini"
-                    @click="handleClick(scope.row, '')"
+                    @click="handleClick(scope.row, '重新发起')"
                     plain
                     >重新发起
                   </el-button>
                   <el-button
+                    style="margin:5px;"
                     v-if="scope.row.letter_status === '已回复'"
                     type="primary"
                     size="mini"
-                    @click="handleClick(scope.row, '')"
+                    @click="handleClick(scope.row, '归档')"
                     plain
                     >归档
                   </el-button>
                   <el-button
-                    v-if="scope.row.letter_status === '已回复'"
-                    @click="handleClick(scope.row, '')"
+                    style="margin:5px;"
+                    v-if="
+                      scope.row.letter_status === '已回复' ||
+                        scope.row.letter_status === '归档'
+                    "
+                    @click="handleClick(scope.row, '打印')"
                     type="primary"
                     size="mini"
                     plain
                     >打印
                   </el-button>
                   <el-button
+                    style="margin:5px;"
                     v-if="scope.row.letter_status === '归档'"
                     type="info"
                     size="mini"
@@ -146,80 +155,82 @@
                   <!-- <el-button @click="handleClick(scope.row,'1')" type="primary" size="mini" plain>查看</el-button> -->
 
                   <!--发起人为登录用户 且状态 为 state=2（发起） 时有权限 -->
-                  <el-button
-                    v-show="userCode === scope.row.USER_CODE"
-                    v-if="scope.row.STATE === '2'"
-                    plain
-                    @click="handleClick(scope.row, '2')"
-                    type="primary"
-                    size="mini"
-                    >撤回
-                  </el-button>
-                  <!--发起人为登录用户 且状态 为 state=1或者7（暂存或者驳回） 时有权限 -->
-                  <el-button
-                    v-show="userCode === scope.row.USER_CODE"
-                    v-if="scope.row.STATE === '1' || scope.row.STATE === '7'"
-                    @click="handleClick(scope.row, '3')"
-                    type="primary"
-                    size="mini"
-                    plain
-                    >修改
-                  </el-button>
-                  <!--状态 为 state=4或者5（已评审待验证或者完成） 时有权限 -->
-                  <el-button
-                    v-if="scope.row.STATE === '4' || scope.row.STATE === '5'"
-                    @click="handleClick(scope.row, '4')"
-                    type="primary"
-                    size="mini"
-                    plain
-                    >打印
-                  </el-button>
-                  <!--状态 为 state=5（完成） 时有权限 -->
-                  <el-button
-                    v-if="scope.row.STATE === '5'"
-                    @click="handleClick(scope.row, '6')"
-                    type="primary"
-                    size="mini"
-                    plain
-                    >导出
-                  </el-button>
-                  <!--用户为信息经办人 且状态 为 state=5（完成） 时有权限 且未归档 -->
-                  <el-button
-                    v-if="
-                      scope.row.STATE === '5' &&
-                        scope.row.ISPOWER > 0 &&
-                        scope.row.FILED_STATE !== 'Y'
-                    "
-                    @click="handleClick(scope.row, '7')"
-                    type="primary"
-                    size="mini"
-                    plain
-                    >归档
-                  </el-button>
-                  <!--用户为信息经办人状态 为 state=5（完成） 时有权限 且已归档显示 -->
-                  <el-button
-                    v-if="
-                      scope.row.STATE === '5' &&
-                        scope.row.ISPOWER > 0 &&
-                        scope.row.FILED_STATE === 'Y'
-                    "
-                    type="info"
-                    size="mini"
-                    plain
-                    disabled
-                    >已归档
-                  </el-button>
+                  <div style="display:none">
+                    <el-button
+                      v-show="userCode === scope.row.USER_CODE"
+                      v-if="scope.row.STATE === '2'"
+                      plain
+                      @click="handleClick(scope.row, '2')"
+                      type="primary"
+                      size="mini"
+                      >撤回
+                    </el-button>
+                    <!--发起人为登录用户 且状态 为 state=1或者7（暂存或者驳回） 时有权限 -->
+                    <el-button
+                      v-show="userCode === scope.row.USER_CODE"
+                      v-if="scope.row.STATE === '1' || scope.row.STATE === '7'"
+                      @click="handleClick(scope.row, '3')"
+                      type="primary"
+                      size="mini"
+                      plain
+                      >修改
+                    </el-button>
+                    <!--状态 为 state=4或者5（已评审待验证或者完成） 时有权限 -->
+                    <el-button
+                      v-if="scope.row.STATE === '4' || scope.row.STATE === '5'"
+                      @click="handleClick(scope.row, '4')"
+                      type="primary"
+                      size="mini"
+                      plain
+                      >打印
+                    </el-button>
+                    <!--状态 为 state=5（完成） 时有权限 -->
+                    <el-button
+                      v-if="scope.row.STATE === '5'"
+                      @click="handleClick(scope.row, '6')"
+                      type="primary"
+                      size="mini"
+                      plain
+                      >导出
+                    </el-button>
+                    <!--用户为信息经办人 且状态 为 state=5（完成） 时有权限 且未归档 -->
+                    <el-button
+                      v-if="
+                        scope.row.STATE === '5' &&
+                          scope.row.ISPOWER > 0 &&
+                          scope.row.FILED_STATE !== 'Y'
+                      "
+                      @click="handleClick(scope.row, '7')"
+                      type="primary"
+                      size="mini"
+                      plain
+                      >归档
+                    </el-button>
+                    <!--用户为信息经办人状态 为 state=5（完成） 时有权限 且已归档显示 -->
+                    <el-button
+                      v-if="
+                        scope.row.STATE === '5' &&
+                          scope.row.ISPOWER > 0 &&
+                          scope.row.FILED_STATE === 'Y'
+                      "
+                      type="info"
+                      size="mini"
+                      plain
+                      disabled
+                      >已归档
+                    </el-button>
 
-                  <!--发起人为登录用户 且状态 为 state=1（暂存） 时有权限 -->
-                  <el-button
-                    v-show="userCode === scope.row.USER_CODE"
-                    v-if="scope.row.STATE === '1'"
-                    type="primary"
-                    size="mini"
-                    @click="handleClick(scope.row, '5')"
-                    plain
-                    >删除
-                  </el-button>
+                    <!--发起人为登录用户 且状态 为 state=1（暂存） 时有权限 -->
+                    <el-button
+                      v-show="userCode === scope.row.USER_CODE"
+                      v-if="scope.row.STATE === '1'"
+                      type="primary"
+                      size="mini"
+                      @click="handleClick(scope.row, '5')"
+                      plain
+                      >删除
+                    </el-button>
+                  </div>
                 </div>
               </template>
             </el-table-column>
@@ -602,20 +613,43 @@ export default {
       /*-----------------删除---------------*/
       if (_type === "删除") {
         this.deleteWork(rowData);
+        return;
       }
+      /*-----------------归档---------------*/
+
+      if (_type === "归档") {
+        this.fileWork(rowData);
+        return;
+      }
+      /*-----------------打印---------------*/
+
+      if (_type === "打印") {
+        //打印
+        let href_url;
+        const { href } = this.$router.resolve({
+          // path: "/printPdf",
+          path: "/printDetail",
+          query: {
+            letter_id: rowData.letter_id
+          }
+        });
+        href_url = href;
+        window.open(href_url, "_blank");
+        return;
+      }
+
       let content = "workDetail";
       //let content = this.$parent.$parent.$parent.linkToPage(this.billType);
       let tabName = this.$parent.$parent.$parent.randomString(6);
       let title = "查看及重新发起";
       //let type = "read";
       let type = "edit";
-      if (_type === "1" || _type === "3" || _type === "7") {
+      if (_type === "查看" || _type === "重新发起" || _type === "7") {
         if (_type === "7") {
           title = "归档页面查看";
           content = "fileDetail";
           //return;
         }
-
         //查看或修改
         if (_type === "3") {
           //修改
@@ -744,6 +778,7 @@ export default {
       this.dialogVisible = false;
     },
     /** table 操作列中 删除按钮 执行方法 */
+    //s删除任务
     deleteWork(rowData) {
       this.$confirm("此操作将删除任务，是否继续?", "提示", {
         confirmButtonText: "是",
@@ -804,7 +839,67 @@ export default {
           });
       });
     },
-
+    //归档
+    fileWork(rowData) {
+      this.$confirm("确定归档?", "提示", {
+        confirmButtonText: "是",
+        cancelButtonText: "否",
+        type: "warning"
+      }).then(() => {
+        let obj = {};
+        obj.serviceRoot = "WorkLetter/work_letter_archive";
+        //obj.baseURL = "/itmsdrm";
+        obj.params = {
+          data: {
+            row: [
+              {
+                letter_id: rowData.letter_id
+              }
+            ]
+          },
+          head: {
+            msg_code: "work_letter_archive",
+            msg_id: "work_letter_archive",
+            request_time: "",
+            source_sys: "prodsm",
+            service_class: "WorkLetter",
+            target_sys: "MOBILE",
+            user_id: "admin",
+            user_key: "admin"
+          }
+        };
+        let type = "info";
+        let message = "";
+        this.requestDrmService(obj, this)
+          .then(res => {
+            if (res.resultCode === "0") {
+              let result_data = JSON.parse(res.resultData);
+              message = "归档成功！"; //result_data.message;
+              if (result_data.flag) {
+                type = "success";
+                this.getProjectList();
+              } else {
+                type = "error";
+              }
+            } else {
+              type = "error";
+              message = "归档失败！";
+            }
+            this.$message({
+              type: type,
+              message: message
+            });
+          })
+          .catch(err => {
+            type = "error";
+            message = "归档失败！";
+            this.$message({
+              type: type,
+              message: message
+            });
+          });
+      });
+    },
     deleteForm(rowData) {
       this.$confirm("此操作将删除表单，是否继续?", "提示", {
         confirmButtonText: "是",

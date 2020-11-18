@@ -46,38 +46,23 @@
                 label="责任人"
                 prop="project_execute_dept_name"
               >
-                <div class="sign_div">
+                <div style="position: relative;">
+                  <el-input
+                    v-model="formData.project_execute_dept_name"
+                    placeholder="请选择责任人"
+                    :disabled="isReadonly"
+                    readonly
+                  ></el-input>
                   <span
-                    v-for="(dept_name,
-                    i) in formData.project_execute_dept_name_ids"
+                    v-if="
+                      formData.project_execute_dept_name != '' && !isReadonly
+                    "
+                    class="clear_input_item"
+                    @click="handleUserDelete('project_execute_dept_name')"
                   >
-                    <span>
-                      <span
-                        >{{ dept_name.dept_name }}/{{
-                          dept_name.user_name
-                        }}</span
-                      >
-                      <span
-                        v-if="dept_name.sign === 'Y'"
-                        class="el-icon-check sign_item"
-                      ></span>
-                      <span
-                        v-if="
-                          i != formData.project_execute_dept_name_ids.length - 1
-                        "
-                        >；</span
-                      >
-                    </span>
+                    <span class="el-icon-circle-close"></span>
                   </span>
                 </div>
-
-                <i
-                  style="position:absolute;right:-30px;top:5px;display:none"
-                  class="el-icon-circle-plus add_user_img"
-                  @click="
-                    handleAddUsers('project_execute_dept_name', '责任人', true)
-                  "
-                ></i>
               </el-form-item>
 
               <!-- <el-form-item style="margin-left:80px" label="责任人" prop="project_code">
@@ -126,14 +111,15 @@
                 :data="formData.letter_contents"
                 tooltip-effect="dark"
                 style="width: 100%"
+                :disabled="isReadonly"
                 @selection-change="handleSelectionChange"
               >
-                <el-table-column
+                <!-- <el-table-column
                   header-align="center"
                   align="center"
                   type="selection"
                   width="55"
-                >
+                > -->
                 </el-table-column>
 
                 <el-table-column
@@ -147,7 +133,7 @@
 
                 <el-table-column
                   header-align="center"
-                  prop="name"
+                  prop="letter_content"
                   label="待实施工作项内容"
                   align="center"
                 >
@@ -163,7 +149,7 @@
                     <el-input
                       :disabled="isReadonly"
                       prop=""
-                      v-model="scope.row.name"
+                      v-model="scope.row.letter_content"
                       placeholder=""
                     />
                   </template>
@@ -219,22 +205,23 @@
                         </div>
                       </div>
                     </div>
+                    
+                    <!-- :show-file-list="true" -->
+                    <!-- action="uploadUrl" -->
+                      <!-- :before-upload="beforeAvatarUpload"
+                       :on-error="handleAvatarError" -->
                     <el-upload
-                      v-else
                       ref="upload_attach2"
                       :disabled="!isReadonly"
                       class="upload-demo"
                       :action="uploadUrl"
-                      :auto-upload="false"
+                      :auto-upload="true"
                       :show-file-list="false"
-                      :name="'FILE_CONTENTS'"
                       multiple
-                      :data="{
-                        bizId: projectId,
-                        uploadType: 'doc01',
-                        prop: 'attach2'
-                      }"
-                      :on-change="handleChangeFile2"
+                    
+                      :on-success="handleChangeFile2"
+:before-upload="beforeAvatarUpload"
+                       :on-error="handleAvatarError"
                     >
                       <div slot="trigger">
                         <el-button
@@ -248,7 +235,33 @@
                       </div>
 
                       <div class="file_list">
-                        <el-row
+
+                      <el-row
+                          class="file_list_row"
+                          v-for="(file, i) in formData.file_list"
+                          :key="'file_' + i"
+                        >
+                          <el-col class="file_list_name">
+                            <span class="el-icon-document"></span>
+                            <a :href="file.emc_url">{{ file.file_name}}</a>
+                          </el-col>
+                          <el-col style="display:none" v-if="isReadonly" class="file_list_delete">
+                            <el-button
+                              type="text"
+                              size="mini"
+                              @click="
+                                handleDeleteFile(
+                                 // file.id,
+                                  file.file_name,
+                                  'attach2'
+                                )
+                              "
+                            >
+                              <span class="el-icon-close"></span>
+                            </el-button>
+                          </el-col>
+                        </el-row>
+                        <!-- <el-row
                           class="file_list_row"
                           v-for="(file, i) in formData.file_list_attach2"
                           :key="'file_' + i"
@@ -272,7 +285,7 @@
                               <span class="el-icon-close"></span>
                             </el-button>
                           </el-col>
-                        </el-row>
+                        </el-row> -->
                       </div>
                     </el-upload>
                   </el-form-item>
@@ -345,6 +358,17 @@ export default {
   },
   data() {
     return {
+
+      uploadImages:[],
+      fileUploading: null, //文件上传 $loading
+
+      /*路由传参*/
+      letter_id: "",
+      letter_implement_id: "",
+      letter_principal_id: "",
+      // letter_id:"e437729804294ecea15d0b73073ea007",
+      // letter_implement_id:"0808f6488b094f8884e7d534ad4b5fde",
+      // letter_principal_id:"9c0267303523415abb174c7f136765a1",
       /*选中的工作项*/
       multipleSelection: [],
 
@@ -373,7 +397,9 @@ export default {
       isReadonly: true, //projectType为read时为 true，（add,read）为 false
       // isReadonly: false, //projectType为read时为 true，（add,read）为 false
 
-      uploadUrl: "transfer/api/dsm/file/upload", //上传url
+      //uploadUrl: "transfer/api/dsm/file/upload", //上传url
+      //uploadUrl: "https://weixin.hbtobacco.cn/financeTransport/wechat/file/upload", //上传url
+      uploadUrl: "/financeTransport/wechat/file/upload", //上传url
 
       /** 表单参数 */
       formData: {
@@ -383,6 +409,7 @@ export default {
         limited_time: "", //限定完成时间
         imple_uses: [], //责任人
         imple_depart: "", //责任部门
+        file_list:[],
 
         /** 项目基本信息 */
         project_id: "", //项目id
@@ -544,23 +571,45 @@ export default {
     }
   },
   mounted() {
+    /*路由参数*/
+    this.letter_id = this.$route.query.letter_id;
+    this.letter_implement_id = this.$route.query.letter_implement_id;
+    this.letter_principal_id = this.$route.query.letter_principal_id;
+
     this.projectTitle = "黄鹤楼科技园工程中心"; //this.$parent.$parent.$parent.projectTitle;
-    this.projectCode = this.$parent.$parent.$parent.getProjectCode(
-      this.billCode
-    ).label;
-    if (this.projectType === "add" || this.projectType === "edit") {
-      this.isReadonly = false;
-    } else {
-      this.isReadonly = true;
-    }
+    // this.projectCode = this.$parent.$parent.$parent.getProjectCode(
+    //   this.billCode
+    // ).label;
+    // if (this.projectType === "add" || this.projectType === "edit") {
+    //   this.isReadonly = false;
+    // } else {
+    //   this.isReadonly = true;
+    // }
 
-    this.getProjectListData();
-
-    if (this.projectType !== "add") {
-      this.getFormData();
-    }
+    this.getFormData();
+    // if (this.projectType !== "add") {
+    //   this.getFormData();
+    // }
   },
   methods: {
+
+     /** TODO 文件上传中 $loading */
+    handleProgress(event, file, fileList) {
+      this.fileUploading = this.$loading({
+        lock: true,
+        text: "文件上传中。。。。",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
+    },
+    /** TODO 文件上传后 $loading 关闭*/
+    handleUploadError(err, file, fileList) {
+      this.fileUploading.close();
+      this.$message({
+        type: "error",
+        message: "上传失败！"
+      });
+    },
     /*------提交事件------*/
     onSubmit() {
       // this.$confirm(`确定提交？`, "提示", {
@@ -765,24 +814,7 @@ export default {
     },
 
     /** 项目基本信息-获取项目列表 */
-    getProjectListData() {
-      let obj = {};
-      obj.params = {
-        type: this.billCode
-      };
-      obj.serviceRoot = "project/searchProjectByJudge";
-      obj.baseURL = "/itmsdrm";
-      this.requestDrmService(obj, this)
-        .then(res => {
-          if (res.resultCode === "0") {
-            let result_data = JSON.parse(res.resultData);
-            this.projectOptions = result_data.rows;
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
+
     /** 项目基本信息 - 项目 change */
     handleSelectProject(val) {
       let list = {};
@@ -846,15 +878,50 @@ export default {
     getFormData() {
       let obj = {};
       obj.params = {
-        id: this.projectId
+        data: {
+          row: [
+            {
+              letter_id: this.letter_id,
+              letter_implement_id: this.letter_implement_id,
+              letter_principal_id: this.letter_principal_id
+            }
+          ]
+        },
+        head: {
+          msg_code: "work_letter_iprincipal_select",
+          msg_id: "work_letter_iprincipal_select",
+          request_time: "",
+          source_sys: "prodsm",
+          service_class: "WorkLetter",
+          target_sys: "MOBILE",
+          user_id: "admin",
+          user_key: "admin"
+        }
       };
-      obj.serviceRoot = "project/designReportByIdQuery";
-      obj.baseURL = "/itmsdrm";
+      obj.serviceRoot = "WorkLetter/work_letter_iprincipal_select";
+      // obj.serviceRoot = "project/designReportByIdQuery";
+      // obj.baseURL = "/itmsdrm";
+      console.log("obj.params:--------" + JSON.stringify(obj.params));
+      this.loading = true;
       this.requestDrmService(obj, this)
         .then(res => {
           if (res.resultCode === "0") {
-            let result_data = JSON.parse(res.resultData).map;
-            this.state = result_data.state;
+            let result_data = JSON.parse(res.resultData);
+
+            this.formData.letter_name = result_data.rows[0].letter_name; //任务名称
+            this.formData.limited_time = result_data.rows[0].limited_time; //限定完成时间
+            this.formData.imple_depart = result_data.rows[0].imple_depart;
+            this.formData.project_execute_dept_name = result_data.rows[0].pname;
+            this.formData.letter_contents = result_data.rows[0].content_list;
+            this.formData.file_list = result_data.rows[0].file_list;
+
+            this.loading = false;
+            /**/
+            /**/
+            /**/
+            /**/
+            /**/
+            /**/
             this.formData.project_id = result_data.project_id;
             this.formData.project_code = result_data.project_code;
             this.formData.project_name = result_data.project_name;
@@ -870,92 +937,6 @@ export default {
 
             this.formData.contract_code = result_data.contract_code;
             this.formData.contract_name = result_data.contract_name;
-            this.multi_contract = result_data.multi_contract;
-
-            this.getContractList(
-              this.formData.project_id,
-              "search",
-              result_data.contract_id
-            );
-            this.formData.project_execute_dept_name_ids = [];
-            this.formData.project_execute_dept_name = "";
-            result_data.project_execute_dept_name.map(el => {
-              this.formData.project_execute_dept_name +=
-                (el.dept_name ? el.dept_name + "/" : "") +
-                el.dept_user_name +
-                "；";
-              el.user_id = el.dept_user_id;
-              el.user_name = el.dept_user_name;
-              el.dept_type = el.type;
-              el.msg = el.msg || "";
-              this.formData.project_execute_dept_name_ids.push(el);
-            });
-            if (this.formData.project_execute_dept_name.length > 0) {
-              this.formData.project_execute_dept_name = this.formData.project_execute_dept_name.substring(
-                0,
-                this.formData.project_execute_dept_name.length - 1
-              );
-            }
-
-            this.formData.biz_about_dept_name_ids = [];
-            this.formData.biz_about_dept_name = "";
-            result_data.biz_about_dept_name.map(el => {
-              this.formData.biz_about_dept_name +=
-                (el.dept_name ? el.dept_name + "/" : "") +
-                el.dept_user_name +
-                "；";
-              el.user_id = el.dept_user_id;
-              el.user_name = el.dept_user_name;
-              el.dept_type = el.type;
-              el.msg = el.msg || "";
-              this.formData.biz_about_dept_name_ids.push(el);
-            });
-            if (this.formData.biz_about_dept_name.length > 0) {
-              this.formData.biz_about_dept_name = this.formData.biz_about_dept_name.substring(
-                0,
-                this.formData.biz_about_dept_name.length - 1
-              );
-            }
-
-            this.formData.biz_comp_dept_name_ids = [];
-            this.formData.biz_comp_dept_name = "";
-            result_data.biz_comp_dept_name.map(el => {
-              this.formData.biz_comp_dept_name +=
-                (el.dept_name ? el.dept_name + "/" : "") +
-                el.dept_user_name +
-                "；";
-              el.user_id = el.dept_user_id;
-              el.user_name = el.dept_user_name;
-              el.dept_type = el.type;
-              el.msg = el.msg || "";
-              this.formData.biz_comp_dept_name_ids.push(el);
-            });
-            if (this.formData.biz_comp_dept_name.length > 0) {
-              this.formData.biz_comp_dept_name = this.formData.biz_comp_dept_name.substring(
-                0,
-                this.formData.biz_comp_dept_name.length - 1
-              );
-            }
-
-            this.formData.provider_name_ids = [];
-            this.formData.provider_name = "";
-            result_data.provider_name.map(el => {
-              this.formData.provider_name +=
-                (el.dept_name ? el.dept_name + "/" : "") +
-                el.dept_user_name +
-                "；";
-              el.user_id = el.dept_user_id;
-              el.user_name = el.dept_user_name;
-              el.dept_type = el.type;
-              el.msg = el.msg || "";
-              this.formData.provider_name_ids.push(el);
-            });
-            if (this.formData.provider_name.length > 0) {
-              this.formData.provider_name = this.formData.provider_name.substring(
-                0,
-                this.formData.provider_name.length - 1
-              );
-            }
 
             result_data.attach.map(el => {
               el.name = el.file_name;
@@ -974,6 +955,7 @@ export default {
           }
         })
         .catch(err => {
+          this.loading = false;
           console.log(err);
         });
     },
@@ -994,80 +976,114 @@ export default {
         })
         .catch(() => {});
     },
-    /** 文件上传 设计报告 */
-    handleChangeFile1(file, fileList) {
-      this.formData.upload_list_attach = [];
-      this.$confirm("确定上传吗？", "提示", {
-        confirmButtonText: "是",
-        cancelButtonText: "否",
-        type: "warning"
-      })
-        .then(() => {
-          fileList.map((el, i) => {
-            if (el.status === "ready") {
-              this.formData.upload_list_attach.push(el);
-            }
-          });
-          this.handleSaveFile({
-            uploadType: "doc02",
-            prop: "attach1"
-          });
-          this.$refs.upload_attach1.clearFiles();
-        })
-        .catch(() => {
-          this.$refs.upload_attach1.clearFiles();
-        });
-    },
+
     /** 文件上传 设计评审报告 */
+    //上传失败
+    handleAvatarError()
+    {
+        this.$message({
+            message: "上传失败",
+            type: "error"
+          });
+    },
+    //上传前
+   beforeAvatarUpload(file) {
+        // const isJPG = file.type === 'image/jpeg';
+        // const isLt2M = file.size / 1024 / 1024 < 2;
+        // if (!isJPG) {
+        //   this.$message.error('上传头像图片只能是 JPG 格式!');
+        // }
+        // if (!isLt2M) {
+        //   this.$message.error('上传头像图片大小不能超过 2MB!');
+        // }
+        // return isJPG && isLt2M;
+        this.$confirm("确定上传吗？", "提示", {
+        confirmButtonText: "是",
+        cancelButtonText: "否",
+        type: "warning"
+      }).then(() => {
+       return true
+      });
+      return false
+      },
     handleChangeFile2(file, fileList) {
-      this.formData.upload_list_attach = [];
-      this.$confirm("确定上传吗？", "提示", {
-        confirmButtonText: "是",
-        cancelButtonText: "否",
-        type: "warning"
-      })
-        .then(() => {
-          fileList.map((el, i) => {
-            if (el.status === "ready") {
-              this.formData.upload_list_attach.push(el);
-            }
-          });
-          this.handleSaveFile({
-            uploadType: "doc01",
-            prop: "attach2"
-          });
-          this.$refs.upload_attach2.clearFiles();
-        })
-        .catch(() => {
-          this.$refs.upload_attach2.clearFiles();
-        });
+     
+      console.log("==========file-----------:",file);
+          var obj = {
+          id: "",
+          tranceId: "",
+          attachName: file.resultData.attachName,
+          attachUrl: file.resultData.attachUrl,
+          attachExt: file.resultData.attachExt,
+          attachSize: file.resultData.attachSize
+        };
+        this.uploadImages.push(obj);
+
+        var fileobj={
+          emc_url:file.resultData.attachUrl,
+          file_name: file.resultData.attachName
+        }
+        this.formData.file_list.push(fileobj);
+        alert("uploadImages:----"+JSON.stringify(this.uploadImages));
+        console.log("==this.uploadImages",this.uploadImages);
+      // this.formData.upload_list_attach = [];
+      // this.$confirm("确定上传吗？", "提示", {
+      //   confirmButtonText: "是",
+      //   cancelButtonText: "否",
+      //   type: "warning"
+      // }).then(() => {
+    //     this.handleProgress();
+    //     var formData = new FormData(); //构造一个 FormData，把后台需要发送的参数添加
+    //     formData.append("file", file.file); //接口需要传的参数
+    //     console.log("---------files:--------", JSON.parse(JSON.stringify(formData)));
+    //     this.$axios({
+    //     method: "post",
+    //     //服务器上传地址
+    //     url: `/financeTransport/wechat/file/upload`,
+    //     data: formData, //（名字是后台接口参数确定的）
+    //     headers: {
+    //       // 修改请求头
+    //       "Content-Type": "multipart/form-data"
+          
+    //     }
+    //   }).then(res => {
+    //     this.handleUploadError();
+    //     var obj = {
+    //       id: "",
+    //       tranceId: "",
+    //       attachName: res.data.resultData.attachName,
+    //       attachUrl: res.data.resultData.attachUrl,
+    //       attachExt: res.data.resultData.attachExt,
+    //       attachSize: res.data.resultData.attachSize
+    //     };
+    //     this.uploadImages.push(obj);
+    //     alert("uploadImages:----"+JSON.stringify(this.uploadImages));
+    //     console.log("==this.uploadImages",this.uploadImages);
+    //   }).catch(()=>{
+    //    alert("error:----"+JSON.stringify(this.uploadImages));
+    //     this.handleUploadError();
+    //  })
+    //     /*-----------分隔符-----------*/
+    //       // fileList.map((el, i) => {
+    //       //   if (el.status === "ready") {
+    //       //     this.formData.upload_list_attach.push(el);
+    //       //   }
+    //       // });
+    //       // this.handleSaveFile({
+    //       //   uploadType: "doc01",
+    //       //   prop: "attach2"
+    //       // });
+    //       this.$refs.upload_attach2.clearFiles();
+    //     })
+    //     .catch(() => {
+    //     this.handleUploadError();
+    //       this.$refs.upload_attach2.clearFiles();
+    //     });
     },
-    /** 文件上传 其它文档 */
-    handleChangeFile3(file, fileList) {
-      this.formData.upload_list_attach = [];
-      this.$confirm("确定上传吗？", "提示", {
-        confirmButtonText: "是",
-        cancelButtonText: "否",
-        type: "warning"
-      })
-        .then(() => {
-          fileList.map((el, i) => {
-            if (el.status === "ready") {
-              this.formData.upload_list_attach.push(el);
-            }
-          });
-          this.handleSaveFile({
-            uploadType: "doc08",
-            prop: "attach3"
-          });
-          this.$refs.upload_attach3.clearFiles();
-        })
-        .catch(() => {
-          this.$refs.upload_attach3.clearFiles();
-        });
-    },
+  
     /** 文件上传接口 */
     handleSaveFile(params) {
+      
       this.$refs.formRef.clearValidate();
       let formData = new FormData();
       this.formData.upload_list_attach.map(file => {
@@ -1076,20 +1092,24 @@ export default {
         }
       });
       let obj = {};
-      this.$parent.$parent.$parent.handleProgress();
+
+     // this.$parent.$parent.$parent.handleProgress();
+      this.handleProgress();
 
       formData.append("bizId", this.projectId);
       formData.append("uploadType", params.uploadType);
       obj.headerType = "application/x-www-form-urlencoded";
       obj.serviceRoot = "transfer/business/file/upload";
-      obj.baseURL = "itmsdrm/";
-
+      //obj.serviceRoot = "wxdsm/services/admin/prodsm/WxbusinessAttachment/WxbusinessAttachment";
+//
+      //obj.baseURL = "itmsdrm/";
       this.uploadFile(obj, formData, this)
         .then(res => {
           this.handleUploadSuccess(res, params);
         })
         .catch(err => {
-          this.$parent.$parent.$parent.handleUploadError();
+          //this.$parent.$parent.$parent.handleUploadError();
+          this.handleUploadError();
           console.log(err);
         });
     },
@@ -1097,7 +1117,8 @@ export default {
     handleUploadSuccess(response, file_data) {
       let message = response.resultMessage;
       let type = "";
-      this.$parent.$parent.$parent.fileUploading.close();
+      //this.$parent.$parent.$parent.fileUploading.close();
+      this.fileUploading.close();
       if (response.resultCode === "0") {
         let result_data = response.resultData;
         result_data.map((el, idx) => {

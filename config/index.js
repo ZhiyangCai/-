@@ -11,6 +11,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+
       '/api': {//代理正式
         target: 'https://weixin.hbtobacco.cn/', //源地址
         secure: false,
@@ -34,7 +35,14 @@ module.exports = {
           '^/bpi': '' //路径重写
         }
       },
-      
+      '/financeTransport': {
+        target: 'https://weixin.hbtobacco.cn',
+        changeOrigin: true,
+        pathRewrite: {
+          '/financeTransport': '/financeTransport'
+        }
+      }
+
     },
 
     // Various Dev Server settings

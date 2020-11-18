@@ -29,15 +29,15 @@ export default {
           //baseUrl = '/mock/52/kjy-work-letter'
           //baseUrl = '/wxdsm/services'
            baseUrl = 'https://weixintest.hbtobacco.cn'
+          // baseUrl = 'http://10.156.5.12:9080'
           
         } else if (this.isNormal === 'false') {//测试环境
           baseUrl = '/bpi'
         }
-      } else {//生产环境
+      } else {//生产环境 
         baseUrl = ''
       }
 console.log("url:-------"+baseUrl + that.GLOBAL.serviceDsmPort + '/' + obj.serviceRoot);
-var urlx="https://weixintest.hbtobacco.cn/wxdsm/services/admin/prodsm/WorkLetter/WorkLetterDeptTree";
 return new Promise((resolve, reject) => {
         that.$axios({
           
@@ -65,14 +65,14 @@ return new Promise((resolve, reject) => {
         let baseUrl = '';
         if (process.env.NODE_ENV === 'development') {//开发环境
           if (this.isNormal === 'true') {//正式环境
-            baseUrl = '/api/'
+           // baseUrl = '/api/'
+            baseUrl = 'https://weixintest.hbtobacco.cn/'
           } else if (this.isNormal === 'false') {//测试环境
             baseUrl = '/bpi/'
           }
         } else {//生产环境
           baseUrl = this.GLOBAL.httpUrl
         }
-
         that.$axios.post(baseUrl + obj.serviceRoot, formData, {
           'Content-Type': 'multipart/form-data'
         }).then(res => {

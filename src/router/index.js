@@ -46,7 +46,7 @@ function checkLogin(next) {
 
 const defaultRouter = [{
     path: '/',
-    name: 'Home',
+    name: 'work',
     component: work,
     beforeEnter: (to, from, next) => {
       const isNormal = sessionStorage.getItem('isNormal');

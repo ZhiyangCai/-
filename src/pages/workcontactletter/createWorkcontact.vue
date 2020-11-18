@@ -59,12 +59,11 @@
                     <span class="el-icon-circle-close"></span>
                   </span>
                 </div>
-
                 <i
                   style="position:absolute;right:-30px;top:5px"
                   class="el-icon-circle-plus add_user_img"
                   @click="
-                    handleAddUsers('project_execute_dept_name', '责任人', true)
+                    handleAddUsers('project_execute_dept_name', '责任人', false)
                   "
                 ></i>
               </el-form-item>
@@ -347,7 +346,7 @@ export default {
       //   type: "warning"
       // }).then(() => {}).catch(() => {});
       //this.$router.push({ path: "/printDetail", query: { stage: "" } });
-
+      this.showMessage = true;
       this.$refs.formRef.validate(valid => {
         if (valid) {
           if (this.formData.letter_contents.length > 0) {
@@ -419,7 +418,7 @@ export default {
               this.loading = false;
               this.$message({
                 type: "success",
-                message: "保存成功"
+                message: "提交成功"
               });
               /*---------保存成功后重置----------*/
               this.formData.letter_name = "";
@@ -428,6 +427,7 @@ export default {
               this.formData.project_execute_dept_name = "";
               this.formData.imple_depart = "";
               this.formData.letter_contents = [];
+              this.showMessage = false;
               console.log("提交成功：----", res);
             })
             .catch(err => {
@@ -444,6 +444,7 @@ export default {
 
     /*------保存事件-----*/
     onSave() {
+      this.showMessage = true;
       this.$refs.formRef.validate(valid => {
         if (valid) {
           if (this.formData.letter_contents.length > 0) {
@@ -523,6 +524,8 @@ export default {
               this.formData.project_execute_dept_name = "";
               this.formData.imple_depart = "";
               this.formData.letter_contents = [];
+              this.showMessage = false;
+
               console.log("保存成功：----", res);
             })
             .catch(err => {

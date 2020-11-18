@@ -1,189 +1,265 @@
 <!-- 设计报告确认单 edit by xyy -->
+
 <template>
-  <div id="designer_report_confirm">
-    <div class="project_form">
-      <div class="project_title">{{ projectTitle }}工作联系函</div>
-      <div
-        style="height:100%;background:white;margin-top:10px;padding:0px 40px;"
-      >
-        <el-form
-          :model="formData"
-          :rules="rules"
-          ref="formRef"
-          size="small"
-          :show-message="showMessage"
-          label-position="left"
-          label-width="150px"
-        >
-          <el-row>
-            <el-col :span="24">
-              <el-form-item
-                style="margin:0px;padding:0px;"
-                label-width="100%"
-                label="武汉问道信息技术有限公司应用软件部"
-              >
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item
-                style="margin:0px;padding:0px;"
-                label="任务名称"
-                prop="project_name"
-              >
-                黄鹤楼科技园工程中心
-                <!-- <el-input
+  <div
+    id="project_print"
+    ref="projectPrintRef"
+    style="-webkit-text-size-adjust: 100%!important;"
+  >
+    <div
+      ref="printContentRef"
+      id="printContent"
+      :class="{ print_content_item: !printBtn }"
+    >
+      <div id="designer_report_confirm">
+        <div class="project_form">
+          <div class="project_title">{{ projectTitle }}工作联系函</div>
+          <div
+            style="height:100%;background:white;margin-top:10px;padding:0px 40px;"
+          >
+            <el-form
+              :model="formData"
+              :rules="rules"
+              ref="formRef"
+              size="small"
+              :show-message="showMessage"
+              label-position="left"
+              label-width="150px"
+            >
+              <el-row>
+                <el-col :span="24">
+                  <el-form-item
+                    style="margin:0px;padding:0px;"
+                    label-width="100%"
+                    label="武汉问道信息技术有限公司应用软件部"
+                  >
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="24">
+                  <el-form-item
+                    style="margin:0px;padding:0px;"
+                    label="任务名称"
+                    prop="project_name"
+                  >
+                    黄鹤楼科技园工程中心
+                    <!-- <el-input
                   disabled="false"
                   v-model="formData.contract_code"
                 ></el-input> -->
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <div v-for="(item, i) in [1, 2]" :key="i">
-            <el-divider>任务发送时间 2020-11-05</el-divider>
-            <div
-              class="func_list_item_"
-              style="margin-top:10px;margin-bottom:10px;"
-            >
-              <!-- 待实施工作内容（只读部分） start-->
-              <el-table
-                border
-                ref="multipleTable"
-                :data="tableData"
-                tooltip-effect="dark"
-                style="width: 100%;"
-              >
-                <el-table-column
-                  header-align="center"
-                  align="center"
-                  type="index"
-                  label="序号"
-                  width="50"
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <div v-for="(item, i) in [1, 2]" :key="i">
+                <el-divider>任务发送时间 2020-11-05</el-divider>
+                <div
+                  class="func_list_item_"
+                  style="margin-top:10px;margin-bottom:10px;"
                 >
-                </el-table-column>
+                  <table
+                    style="border-collapse:collapse;width:100%;display:none"
+                    border="1"
+                    cellpadding="0"
+                    cellspacing="0"
+                  >
+                    <thead>
+                      <tr>
+                        <td>序号</td>
+                        <td>带实施工作项</td>
+                      </tr>
+                    </thead>
+                  </table>
+                  <!-- 待实施工作内容（只读部分） start-->
+                  <el-table
+                    border
+                    ref="multipleTable"
+                    :data="tableData"
+                    tooltip-effect="dark"
+                    style="width: 100%;"
+                  >
+                    <!-- width="50" -->
+                    <el-table-column
+                      header-align="center"
+                      align="center"
+                      type="index"
+                      label="序号"
+                      width="50"
+                    >
+                    </el-table-column>
 
-                <!-- <el-table-column
+                    <!-- <el-table-column
                   header-align="center"
                 prop="address"
                 label="待实施工作项内容"
                 show-overflow-tooltip>
               </el-table-column> -->
 
-                <el-table-column
-                  header-align="center"
-                  prop="name"
-                  label="待实施工作项内容"
-                  align="center"
-                >
-                  <!-- <template slot-scope="scope" >            
+                    <el-table-column
+                      header-align="center"
+                      prop="name"
+                      label="待实施工作项内容"
+                      align="center"
+                    >
+                      <!-- <template slot-scope="scope" >            
                   <el-input
                     contenteditable="true"
                     placeholder=""/>     
                 </template> -->
-                  <template slot-scope="scope">
-                    <el-input
-                      disabled="false"
-                      v-model="scope.row.name"
-                      placeholder=""
-                    />
-                  </template>
-                </el-table-column>
-              </el-table>
-              <!-- 待实施工作内容（只读部分） end-->
+                      <template slot-scope="scope">
+                        <el-input
+                          disabled="false"
+                          v-model="scope.row.name"
+                          placeholder=""
+                        />
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  <!-- 待实施工作内容（只读部分） end-->
 
-              <!-- 实施情况描述start -->
-              <el-table
-                :data="implementationTableData"
-                border
-                style="width: 100%;margin-top:20px;"
-              >
-                <el-table-column
-                  header-align="center"
-                  align="center"
-                  type="index"
-                  label="序号"
-                  width="50"
-                >
-                </el-table-column>
-                <!-- min-width="300" -->
-                <el-table-column
-                  align="center"
-                  header-align="center"
-                  prop="a"
-                  label="实施情况描述"
-                >
-                </el-table-column>
-                <el-table-column
-                  align="center"
-                  header-align="center"
-                  prop="b"
-                  label="责任人"
-                  width="180"
-                >
-                </el-table-column>
-                <el-table-column
-                  align="center"
-                  header-align="center"
-                  prop="c"
-                  label="完成时间"
-                >
-                </el-table-column>
-              </el-table>
-              <!-- 实施情况描述end -->
-            </div>
-          </div>
-          <el-divider></el-divider>
-
-          <p style="text-align:right;font-size:14px">
-            新型烟草制品工程中心
-          </p>
-          <p style="text-align:right;font-size:14px">2020年11月3日</p>
-
-          <!-- 底部按钮start -->
-          <el-row>
-            <el-col :span="24">
-              <div style="text-align:center;margin:30px">
-                <el-button type="primary">打印</el-button>
+                  <!-- 实施情况描述start -->
+                  <el-table
+                    :data="implementationTableData"
+                    border
+                    style="width: 100%;margin-top:20px;"
+                  >
+                    <el-table-column
+                      header-align="center"
+                      align="center"
+                      type="index"
+                      label="序号"
+                      width="50"
+                    >
+                    </el-table-column>
+                    <!-- min-width="300" -->
+                    <el-table-column
+                      align="center"
+                      header-align="center"
+                      prop="a"
+                      label="实施情况描述"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      header-align="center"
+                      prop="b"
+                      label="责任人"
+                      width="180"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      header-align="center"
+                      prop="c"
+                      label="完成时间"
+                    >
+                    </el-table-column>
+                  </el-table>
+                  <!-- 实施情况描述end -->
+                </div>
               </div>
-            </el-col>
-          </el-row>
-          <!-- 底部按钮end -->
-        </el-form>
+              <el-divider></el-divider>
+
+              <p style="text-align:right;font-size:14px">
+                新型烟草制品工程中心
+              </p>
+              <p style="text-align:right;font-size:14px">2020年11月3日</p>
+
+              <!-- 底部按钮start -->
+              <!-- <el-row>
+                <el-col :span="24">
+                  <div style="text-align:center;margin:30px">
+                    <el-button type="primary">打印</el-button>
+                  </div>
+                </el-col>
+              </el-row> -->
+              <!-- 底部按钮end -->
+            </el-form>
+          </div>
+        </div>
+
+        <el-dialog
+          v-if="dialogVisible"
+          class="no_footer"
+          :visible.sync="dialogVisible"
+          width="80%"
+          :modal-append-to-body="false"
+          :show-close="false"
+          :close-on-click-modal="false"
+        >
+          <div slot="title">
+            <el-row>
+              <el-col style="width: calc(100% - 100px);padding-left: 15px;">{{
+                dialogTitle
+              }}</el-col>
+              <el-col
+                style="width: 100px;text-align: right;padding-right: 15px;"
+              >
+                <span
+                  class="el-dialog__close el-icon el-icon-close active"
+                  style="padding:5px;font-weight: bold;"
+                  @click="dialogVisible = false"
+                ></span>
+              </el-col>
+            </el-row>
+          </div>
+
+          <dept_user_index
+            ref="deptUserRef"
+            :isCheckBtn="isCheckBtn"
+          ></dept_user_index>
+        </el-dialog>
       </div>
     </div>
 
-    <el-dialog
-      v-if="dialogVisible"
-      class="no_footer"
-      :visible.sync="dialogVisible"
-      width="80%"
-      :modal-append-to-body="false"
-      :show-close="false"
-      :close-on-click-modal="false"
-    >
-      <div slot="title">
-        <el-row>
-          <el-col style="width: calc(100% - 100px);padding-left: 15px;">{{
-            dialogTitle
-          }}</el-col>
-          <el-col style="width: 100px;text-align: right;padding-right: 15px;">
-            <span
-              class="el-dialog__close el-icon el-icon-close active"
-              style="padding:5px;font-weight: bold;"
-              @click="dialogVisible = false"
-            ></span>
-          </el-col>
-        </el-row>
-      </div>
-
-      <dept_user_index
-        ref="deptUserRef"
-        :isCheckBtn="isCheckBtn"
-      ></dept_user_index>
-    </el-dialog>
+    <div class="print_btn print_hide">
+      <el-button type="primary" @click="handlePrint" size="mini"
+        >打印</el-button
+      >
+    </div>
   </div>
 </template>
+<style scoped media="print">
+#project_print {
+  height: 100%;
+  padding: 0 10px;
+}
+
+#printContent {
+  position: relative;
+  height: calc(100% - 50px);
+  overflow: auto;
+}
+
+.print_content_item {
+  height: 100%;
+}
+
+#printContent .print_component {
+  min-width: 650px;
+}
+
+#project_print .print_btn {
+  border-top: 2px solid #e4e7ed;
+  text-align: center;
+  padding-top: 10px;
+}
+
+@page {
+  size: auto;
+  margin: 0mm;
+}
+
+@media print {
+  .print_hide {
+    display: none;
+  }
+
+  .print_content {
+    margin-top: 20px !important;
+  }
+}
+</style>
 
 <script>
 import dept_user_index from "../project_dept_user/dept_user_index"; //人员选择

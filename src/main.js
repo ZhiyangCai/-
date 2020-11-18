@@ -61,7 +61,12 @@ import '@/assets/css/common.css'
 /** TODO 导入axios */
 import axios from 'axios'
 
+//axios.defaults.baseURL = 'http://10.156.5.12:9080';
+//axios.defaults.baseURL = 'https://weixin.hbtobacco.cn'
+//axios.defaults.baseURL = 'https://weixin.hbtobacco.cn'
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 Vue.prototype.$axios = axios;
+
 Vue.config.productionTip = false;
 
 
