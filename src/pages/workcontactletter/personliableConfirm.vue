@@ -161,24 +161,24 @@
             <div style="margin-top:20px;">
               <el-row>
                 <el-col :span="24">
-                  <el-form-item label="实际情况描述" prop="project_name">
+                  <el-form-item label="实际情况描述" prop="work_describe">
+                    <!-- :autosize="{ minRows: 4 }" -->
                     <el-input
-                      v-model="formData.contract_code"
+                      v-model="formData.work_describe"
                       type="textarea"
                       rows="4"
                       :disabled="!isReadonly"
                       placeholder=""
-                      :autosize="{ minRows: 4 }"
                     ></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="完成时间">
+                  <el-form-item label="完成时间" prop="finish_time">
                     <el-date-picker
                       :disabled="!isReadonly"
-                      v-model="formData.sign_date"
+                      v-model="formData.finish_time"
                       type="date"
                       placeholder="请选择签字日期"
                     ></el-date-picker>
@@ -187,41 +187,23 @@
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="设计报告：" prop="file_list_attach2">
-                    <div v-if="isReadonly && projectType === 'read'">
-                      <span
-                        class="attach_no_data"
-                        v-if="formData.file_list_attach2.length === 0"
-                        >暂无</span
-                      >
-                      <div v-else>
-                        <div
-                          class="download_file_name"
-                          v-for="(item, i) in formData.file_list_attach2"
-                          :key="'attach_' + i"
-                        >
-                          <span class="el-icon-document"></span>
-                          <a :href="item.url">{{ item.name }}</a>
-                        </div>
-                      </div>
-                    </div>
-                    
+                  <el-form-item label="设计报告：" prop="file_list">
                     <!-- :show-file-list="true" -->
                     <!-- action="uploadUrl" -->
                       <!-- :before-upload="beforeAvatarUpload"
                        :on-error="handleAvatarError" -->
+                        <!-- :file-list="formData.file_list" -->
                     <el-upload
                       ref="upload_attach2"
                       :disabled="!isReadonly"
+                      :file-list="formData.file_list"
                       class="upload-demo"
                       :action="uploadUrl"
-                      :auto-upload="true"
+                      :auto-upload="isAutoupload"
                       :show-file-list="false"
                       multiple
-                    
                       :on-success="handleChangeFile2"
-:before-upload="beforeAvatarUpload"
-                       :on-error="handleAvatarError"
+                      :on-error="handleAvatarError" 
                     >
                       <div slot="trigger">
                         <el-button
@@ -231,7 +213,6 @@
                           style="width: 200px;"
                           >上传附件</el-button
                         >
-                        <!--<el-button size="small" :disabled="isReadonly" type="primary" style="width: 100px;">上传</el-button>-->
                       </div>
 
                       <div class="file_list">
@@ -245,15 +226,15 @@
                             <span class="el-icon-document"></span>
                             <a :href="file.emc_url">{{ file.file_name}}</a>
                           </el-col>
-                          <el-col style="display:none" v-if="isReadonly" class="file_list_delete">
+                          <el-col  v-if="isReadonly" class="file_list_delete">
                             <el-button
                               type="text"
                               size="mini"
                               @click="
                                 handleDeleteFile(
-                                 // file.id,
+                                  file.id,
                                   file.file_name,
-                                  'attach2'
+                                  'attach'
                                 )
                               "
                             >
@@ -299,10 +280,8 @@
                   <el-button
                     type="primary"
                     v-loading.fullscreen.lock="this.loading"
-                    @click="onSave"
-                    >保存</el-button
-                  >
-                  <el-button @click="onSubmit" type="warning">提交</el-button>
+                    @click='onSave("save")'>保存</el-button>
+                  <el-button @click='onSave("submit")' type="warning">提交</el-button>
                 </div>
               </el-col>
             </el-row>
@@ -359,6 +338,9 @@ export default {
   data() {
     return {
 
+      work_describe:"",//实际情况描述
+      finish_time:"",//完成时间
+      isAutoupload:true,//是否自动上传
       uploadImages:[],
       fileUploading: null, //文件上传 $loading
 
@@ -439,33 +421,58 @@ export default {
       },
       /** 表单校验 */
       rules: {
-        letter_name: [
+         file_list:[
+           {
+            type: "array",
+            required: true,
+            message: "请上传附件",
+            trigger: "blur"
+          }
+        ],
+         work_describe: [
           {
             required: true,
+            message: "请填写实际情况描述",
+            trigger: "blur"
+          }
+        ],
+         finish_time: [
+          {
+            //type: "date",
+            // trigger: "change",
+            trigger: "blur",
+            required: true,
+            message: "请选择完成时间"
+          }
+        ],
+        letter_name: [
+          {
+            required: false,
             message: "请填写任务名称",
             trigger: "blur"
           }
         ],
+       
         letter_contents: [
           {
             type: "array",
-            required: true,
+            required: false,
             message: "请填写工作事项",
             trigger: "blur"
           }
         ],
         limited_time: [
           {
-            type: "date",
+            //type: "date",
             // trigger: "change",
             trigger: "blur",
-            required: true,
+            required: false,
             message: "请选择限定完成时间"
           }
         ],
         imple_depart: [
           {
-            required: true,
+            required: false,
             trigger: "blur",
 
             message: "请填写责任单位（部门）"
@@ -473,7 +480,7 @@ export default {
         ],
         project_execute_dept_name: [
           {
-            required: true,
+            required: false,
             message: "请选择责任人"
           }
         ],
@@ -610,171 +617,194 @@ export default {
         message: "上传失败！"
       });
     },
-    /*------提交事件------*/
-    onSubmit() {
-      // this.$confirm(`确定提交？`, "提示", {
-      //   confirmButtonText: "是",
-      //   cancelButtonText: "否",
-      //   type: "warning"
-      // }).then(() => {}).catch(() => {});
-      //this.$router.push({ path: "/printDetail", query: { stage: "" } });
-
+   
+    /*------保存，提交事件-----*/
+    onSave(_type) {
+      this.showMessage=true;
       this.$refs.formRef.validate(valid => {
         if (valid) {
-          if (this.formData.letter_contents.length > 0) {
-            var contents = this.formData.letter_contents;
-            for (var i = 0; i < contents.length; i++) {
-              if (contents[i].name.trim() === "") {
-                this.$message({
-                  message: "工作项内容并不能为空！",
-                  type: "warning"
-                });
-                return;
+          /*------执行操作------*/
+          var fileList=[];
+          for(var i=0;i<this.formData.file_list.length;i++)
+          {
+              var item={
+                FILE_NAME:this.formData.file_list[i].file_name,
+                EMC_URL:this.formData.file_list[i].emc_url
               }
-            }
+              fileList.push(item);
           }
-
-          /*------执行提交操作------*/
-          var date = this.moment(this.formData.limited_time).format(
-            "YYYY-MM-DD HH:mm:ss"
-          );
-          this.formData.limited_time = date;
-
-          let checkedList = this.checkedList; //责任人
-          if (checkedList.length > 0) {
-            for (var i = 0; i < checkedList.length; i++) {
-              this.formData.imple_uses.push(checkedList[i].user_id);
-            }
-          }
-          let letter_contents = []; //工作事项
-          if (this.formData.letter_contents.length > 0) {
-            for (var i = 0; i < this.formData.letter_contents.length; i++) {
-              letter_contents.push(this.formData.letter_contents[i].name);
-            }
-          }
-
           let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_submit";
+          obj.serviceRoot = "WxbusinessAttachment/WxbusinessAttachment";
           obj.params = {
-            data: {
-              row: [
-                {
-                  letter_name: this.formData.letter_name,
-                  letter_contents: letter_contents,
-                  limited_time: this.formData.limited_time,
-                  imple_uses: this.formData.imple_uses, //["99100774", "99100778"],
-                  imple_depart: this.formData.imple_depart,
-                  loggedUser: {
-                    path: "1/S00000000000003/S00000000012424",
-                    weight: "1",
-                    id: this.GLOBAL.userCode
-                  }
+                "data":{
+                    "row":[
+                        {
+                            "MEDIA_LIST":fileList,
+                            "CREATOR":this.GLOBAL.userCode,
+                            "BUSINESSID":this.letter_principal_id
+                        }
+                    ]
+                },
+                "head":{
+                    "msg_code":"",
+                    "msg_id":"WxbusinessAttachment",
+                    "request_time":"",
+                    "service_class":"WxbusinessAttachment",
+                    "source_sys":"prodsm",
+                    "target_sys":"MOBILE",
+                    "user_id":"admin",
+                    "user_key":"admin"
                 }
-              ]
-            },
-            head: {
-              msg_code: "work_letter_submit",
-              msg_id: "work_letter_submit",
-              request_time: "",
-              source_sys: "prodsm",
-              service_class: "WorkLetter",
-              target_sys: "MOBILE",
-              user_id: "admin",
-              user_key: "admin"
-            }
           };
-
           this.loading = true;
           this.requestDrmService(obj, this)
             .then(res => {
               this.loading = false;
-              console.log("提交成功：----", res);
+                if (res.resultCode === "0") {
+                 if(_type==="save")
+                 {
+                  this.saveDetail();
+                 }
+                 else{
+                   this.submimtDetail();
+                 }
+                  console.log("上传文件成功：----", res);
+                }
+                else {
+                    this.$message({
+                      message: "保存失败",
+                      type: "error"
+                  });
+                }
+             
             })
             .catch(err => {
+              this.loading = false;
+              this.$message({
+                message: "保存失败",
+                type: "error"
+              });
               console.log(err);
             });
         }
       });
     },
-
-    /*------保存事件-----*/
-    onSave() {
-      this.$refs.formRef.validate(valid => {
-        if (valid) {
-          if (this.formData.letter_contents.length > 0) {
-            var contents = this.formData.letter_contents;
-            for (var i = 0; i < contents.length; i++) {
-              if (contents[i].name.trim() === "") {
-                this.$message({
-                  message: "工作项内容并不能为空！",
-                  type: "warning"
-                });
-                return;
-              }
-            }
-          }
-
-          /*------执行保存操作------*/
-          var date = this.moment(this.formData.limited_time).format(
+    //提交明细操作
+    submimtDetail(){
+        var date = this.moment(this.formData.finish_time).format(
             "YYYY-MM-DD HH:mm:ss"
           );
-          this.formData.limited_time = date;
-          alert("即将要保存的时间：" + this.formData.limited_time);
-          let checkedList = this.checkedList; //责任人
-          if (checkedList.length > 0) {
-            for (var i = 0; i < checkedList.length; i++) {
-              this.formData.imple_uses.push(checkedList[i].user_id);
-            }
-          }
-          let letter_contents = []; //工作事项
-          if (this.formData.letter_contents.length > 0) {
-            for (var i = 0; i < this.formData.letter_contents.length; i++) {
-              letter_contents.push(this.formData.letter_contents[i].name);
-            }
-          }
-
+          this.formData.finish_time = date;
           let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_save";
+          obj.serviceRoot = "WorkLetter/work_letter_iprincipal_submit";
           obj.params = {
-            data: {
-              row: [
-                {
-                  letter_name: this.formData.letter_name,
-                  letter_contents: letter_contents,
-                  limited_time: this.formData.limited_time,
-                  imple_uses: this.formData.imple_uses, //["99100774", "99100778"],
-                  imple_depart: this.formData.imple_depart,
-                  loggedUser: {
-                    path: "1/S00000000000003/S00000000012424",
-                    weight: "1",
-                    id: this.GLOBAL.userCode
-                  }
+                 "data": {
+                        "row" :[{
+                            "letter_id": this.letter_id,
+                            "letter_principal_id": this.letter_principal_id,
+                            "work_describe": this.formData.work_describe,
+                            "finish_time": this.formData.finish_time
+                         }]
+                      },
+                      "head": {
+                        "msg_code": "work_letter_iprincipal_submit",
+                        "msg_id": "work_letter_iprincipal_submit",
+                        "request_time": "",
+                        "source_sys": "prodsm",
+                        "service_class": "WorkLetter",
+                        "target_sys": "MOBILE",
+                        "user_id": "admin",
+                        "user_key": "admin"
+                      }
+                 
                 }
-              ]
-            },
-            head: {
-              msg_code: "work_letter_save",
-              msg_id: "work_letter_save",
-              request_time: "",
-              source_sys: "prodsm",
-              service_class: "WorkLetter",
-              target_sys: "MOBILE",
-              user_id: "admin",
-              user_key: "admin"
-            }
-          };
-
+          console.log("提交明细部分:----"+JSON.stringify(obj.params));
           this.loading = true;
           this.requestDrmService(obj, this)
             .then(res => {
               this.loading = false;
-              console.log("保存成功：----", res);
+                 if (res.resultCode === "0") {
+                 this.$message({
+                      message: "提交成功",
+                      type: "success"
+                  });
+                   window.location.href="about:blank";
+                window.close();
+                }
+                else {
+                    this.$message({
+                      message: "提交失败",
+                      type: "error"
+                  });
+                }
             })
             .catch(err => {
-              console.log(err);
+              this.loading = false;
+              this.$message({
+                message: "提交失败",
+                type: "error"
+              });
+              console.log("请求提交error后返回：------",err);
             });
-        }
-      });
+
+    },
+    //保存明细操作
+    saveDetail(){
+          var date = this.moment(this.formData.finish_time).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
+          this.formData.finish_time = date;
+          let obj = {};
+          obj.serviceRoot = "WorkLetter/work_letter_iprincipal_save";
+          obj.params = {
+                  "data": {
+                    "row" :[{
+                        "letter_principal_id": this.letter_principal_id,
+                        "work_describe": this.formData.work_describe,
+                        "finish_time": this.formData.finish_time
+                       }]
+                  },
+                  "head": {
+                    "msg_code": "work_letter_iprincipal_save",
+                    "msg_id": "work_letter_iprincipal_save",
+                    "request_time": "",
+                    "source_sys": "prodsm",
+                    "service_class": "WorkLetter",
+                    "target_sys": "MOBILE",
+                    "user_id": "admin",
+                    "user_key": "admin"
+                  }
+                }
+          console.log("保存明细部分:----"+JSON.stringify(obj.params));
+          this.loading = true;
+          this.requestDrmService(obj, this)
+            .then(res => {
+              console.log("请求保存success后返回：------",res);
+              this.loading = false;
+                 if (res.resultCode === "0") {
+                 this.$message({
+                      message: "保存成功",
+                      type: "success"
+                  });
+                  window.location.href="about:blank";
+                window.close();
+              
+                }
+                else {
+                    this.$message({
+                      message: "保存失败",
+                      type: "error"
+                  });
+                }
+            })
+            .catch(err => {
+              this.loading = false;
+              this.$message({
+                message: "保存失败",
+                type: "error"
+              });
+              console.log("请求保存error后返回：------",err);
+            });
     },
     //增加一行表格
     handleAddDetails() {
@@ -967,12 +997,17 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.$parent.$parent.$parent.deleteUploadFile(id, "click");
-          this.formData["file_list_" + prop].map((el, i) => {
-            if (el.id === id) {
-              this.formData["file_list_" + prop].splice(i, 1);
+           this.formData["file_list"].map((el, i) => {
+            if (el.file_name === name) {
+              this.formData["file_list"].splice(i, 1);
             }
           });
+         //this.$parent.$parent.$parent.deleteUploadFile(id, "click");
+          // this.formData["file_list_" + prop].map((el, i) => {
+          //   if (el.id === id) {
+          //     this.formData["file_list_" + prop].splice(i, 1);
+          //   }
+          // });
         })
         .catch(() => {});
     },
@@ -997,17 +1032,29 @@ export default {
         //   this.$message.error('上传头像图片大小不能超过 2MB!');
         // }
         // return isJPG && isLt2M;
-        this.$confirm("确定上传吗？", "提示", {
+       var yn="n";
+       this.$confirm("确定上传吗？", "提示", {
         confirmButtonText: "是",
         cancelButtonText: "否",
         type: "warning"
       }).then(() => {
-       return true
-      });
-      return false
+       yn="y";
+      this.isAutoupload=true;
+      }).catch(() => {
+        yn="n";
+        });
+       if(yn==="y")
+       {
+          return true
+       }
+       else{
+          return false
+       }
+       
+       
       },
+      //上传成功
     handleChangeFile2(file, fileList) {
-     
       console.log("==========file-----------:",file);
           var obj = {
           id: "",
@@ -1024,8 +1071,7 @@ export default {
           file_name: file.resultData.attachName
         }
         this.formData.file_list.push(fileobj);
-        alert("uploadImages:----"+JSON.stringify(this.uploadImages));
-        console.log("==this.uploadImages",this.uploadImages);
+        console.log("==this.ssuploadImages",this.uploadImages);
       // this.formData.upload_list_attach = [];
       // this.$confirm("确定上传吗？", "提示", {
       //   confirmButtonText: "是",
@@ -1082,65 +1128,65 @@ export default {
     },
   
     /** 文件上传接口 */
-    handleSaveFile(params) {
+//     handleSaveFile(params) {
       
-      this.$refs.formRef.clearValidate();
-      let formData = new FormData();
-      this.formData.upload_list_attach.map(file => {
-        if (file.status === "ready") {
-          formData.append("FILE_CONTENTS", file.raw);
-        }
-      });
-      let obj = {};
+//       this.$refs.formRef.clearValidate();
+//       let formData = new FormData();
+//       this.formData.upload_list_attach.map(file => {
+//         if (file.status === "ready") {
+//           formData.append("FILE_CONTENTS", file.raw);
+//         }
+//       });
+//       let obj = {};
 
-     // this.$parent.$parent.$parent.handleProgress();
-      this.handleProgress();
+//      // this.$parent.$parent.$parent.handleProgress();
+//       this.handleProgress();
 
-      formData.append("bizId", this.projectId);
-      formData.append("uploadType", params.uploadType);
-      obj.headerType = "application/x-www-form-urlencoded";
-      obj.serviceRoot = "transfer/business/file/upload";
-      //obj.serviceRoot = "wxdsm/services/admin/prodsm/WxbusinessAttachment/WxbusinessAttachment";
-//
-      //obj.baseURL = "itmsdrm/";
-      this.uploadFile(obj, formData, this)
-        .then(res => {
-          this.handleUploadSuccess(res, params);
-        })
-        .catch(err => {
-          //this.$parent.$parent.$parent.handleUploadError();
-          this.handleUploadError();
-          console.log(err);
-        });
-    },
+//       formData.append("bizId", this.projectId);
+//       formData.append("uploadType", params.uploadType);
+//       obj.headerType = "application/x-www-form-urlencoded";
+//       obj.serviceRoot = "transfer/business/file/upload";
+//       //obj.serviceRoot = "wxdsm/services/admin/prodsm/WxbusinessAttachment/WxbusinessAttachment";
+// //
+//       //obj.baseURL = "itmsdrm/";
+//       this.uploadFile(obj, formData, this)
+//         .then(res => {
+//           this.handleUploadSuccess(res, params);
+//         })
+//         .catch(err => {
+//           //this.$parent.$parent.$parent.handleUploadError();
+//           this.handleUploadError();
+//           console.log(err);
+//         });
+//     },
     /** 文件上传成功后赋值 */
-    handleUploadSuccess(response, file_data) {
-      let message = response.resultMessage;
-      let type = "";
-      //this.$parent.$parent.$parent.fileUploading.close();
-      this.fileUploading.close();
-      if (response.resultCode === "0") {
-        let result_data = response.resultData;
-        result_data.map((el, idx) => {
-          this.formData["file_list_" + file_data.prop].push({
-            id: el.id,
-            url: el.url,
-            bizId: el.bizId,
-            upload_type: el.uploadType,
-            file_name: el.fileName,
-            file_size: el.fileSize,
-            prop: file_data.prop
-          });
-        });
-        type = "success";
-      } else {
-        type = "error";
-      }
-      this.$message({
-        type: type,
-        message: message
-      });
-    },
+    // handleUploadSuccess(response, file_data) {
+    //   let message = response.resultMessage;
+    //   let type = "";
+    //   //this.$parent.$parent.$parent.fileUploading.close();
+    //   this.fileUploading.close();
+    //   if (response.resultCode === "0") {
+    //     let result_data = response.resultData;
+    //     result_data.map((el, idx) => {
+    //       this.formData["file_list_" + file_data.prop].push({
+    //         id: el.id,
+    //         url: el.url,
+    //         bizId: el.bizId,
+    //         upload_type: el.uploadType,
+    //         file_name: el.fileName,
+    //         file_size: el.fileSize,
+    //         prop: file_data.prop
+    //       });
+    //     });
+    //     type = "success";
+    //   } else {
+    //     type = "error";
+    //   }
+    //   this.$message({
+    //     type: type,
+    //     message: message
+    //   });
+    // },
     /** 删除选择人员 */
     handleUserDelete(prop) {
       this.formData[prop] = "";

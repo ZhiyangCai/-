@@ -24,19 +24,11 @@
               ></el-input>
             </el-form-item>
             <el-form-item label="状态：">
-              <!-- v-model="searchFormInline.bill_type" -->
               <el-select
                 v-model="this.searchFormInline.letter_status"
                 placeholder="请选择状态"
-                @change="handleSelectBill"
+                @change="handleSelectStatus"
               >
-                <!-- <el-option
-                  v-for="bill_type in processCompList"
-                  :label="bill_type.value"
-                  :value="bill_type.code"
-                  :key="'bill_type_' + bill_type.id"
-                ></el-option> -->
-
                 <el-option
                   v-for="item in statusOptions"
                   :label="item.label"
@@ -153,84 +145,6 @@
                   <!------------------------------分隔符---------------------------- -->
                   <!-- 所有状态都有权限 -->
                   <!-- <el-button @click="handleClick(scope.row,'1')" type="primary" size="mini" plain>查看</el-button> -->
-
-                  <!--发起人为登录用户 且状态 为 state=2（发起） 时有权限 -->
-                  <div style="display:none">
-                    <el-button
-                      v-show="userCode === scope.row.USER_CODE"
-                      v-if="scope.row.STATE === '2'"
-                      plain
-                      @click="handleClick(scope.row, '2')"
-                      type="primary"
-                      size="mini"
-                      >撤回
-                    </el-button>
-                    <!--发起人为登录用户 且状态 为 state=1或者7（暂存或者驳回） 时有权限 -->
-                    <el-button
-                      v-show="userCode === scope.row.USER_CODE"
-                      v-if="scope.row.STATE === '1' || scope.row.STATE === '7'"
-                      @click="handleClick(scope.row, '3')"
-                      type="primary"
-                      size="mini"
-                      plain
-                      >修改
-                    </el-button>
-                    <!--状态 为 state=4或者5（已评审待验证或者完成） 时有权限 -->
-                    <el-button
-                      v-if="scope.row.STATE === '4' || scope.row.STATE === '5'"
-                      @click="handleClick(scope.row, '4')"
-                      type="primary"
-                      size="mini"
-                      plain
-                      >打印
-                    </el-button>
-                    <!--状态 为 state=5（完成） 时有权限 -->
-                    <el-button
-                      v-if="scope.row.STATE === '5'"
-                      @click="handleClick(scope.row, '6')"
-                      type="primary"
-                      size="mini"
-                      plain
-                      >导出
-                    </el-button>
-                    <!--用户为信息经办人 且状态 为 state=5（完成） 时有权限 且未归档 -->
-                    <el-button
-                      v-if="
-                        scope.row.STATE === '5' &&
-                          scope.row.ISPOWER > 0 &&
-                          scope.row.FILED_STATE !== 'Y'
-                      "
-                      @click="handleClick(scope.row, '7')"
-                      type="primary"
-                      size="mini"
-                      plain
-                      >归档
-                    </el-button>
-                    <!--用户为信息经办人状态 为 state=5（完成） 时有权限 且已归档显示 -->
-                    <el-button
-                      v-if="
-                        scope.row.STATE === '5' &&
-                          scope.row.ISPOWER > 0 &&
-                          scope.row.FILED_STATE === 'Y'
-                      "
-                      type="info"
-                      size="mini"
-                      plain
-                      disabled
-                      >已归档
-                    </el-button>
-
-                    <!--发起人为登录用户 且状态 为 state=1（暂存） 时有权限 -->
-                    <el-button
-                      v-show="userCode === scope.row.USER_CODE"
-                      v-if="scope.row.STATE === '1'"
-                      type="primary"
-                      size="mini"
-                      @click="handleClick(scope.row, '5')"
-                      plain
-                      >删除
-                    </el-button>
-                  </div>
                 </div>
               </template>
             </el-table-column>
@@ -282,84 +196,6 @@
       <div slot="footer" style="text-align: center;">
         <el-button type="primary" size="mini" v-on:click="pdfOut"
           >导出</el-button
-        >
-      </div>
-    </el-dialog>
-
-    <el-dialog
-      v-if="dialogVisible1"
-      :visible.sync="dialogVisible1"
-      width="50%"
-      :modal-append-to-body="false"
-      :show-close="false"
-      :close-on-click-modal="false"
-      class="history_dialog"
-    >
-      <div slot="title">
-        <el-row>
-          <el-col style="width: calc(100% - 100px);padding-left: 15px;">{{
-            dialogTitle1
-          }}</el-col>
-          <el-col style="width: 100px;text-align: right;padding-right: 15px;">
-            <span
-              class="el-dialog__close el-icon el-icon-close active"
-              style="padding:5px;font-weight: bold;"
-              @click="dialogVisible1 = false"
-            ></span>
-          </el-col>
-        </el-row>
-      </div>
-      <div style="line-height: 50px;font-size: 14px;min-width: 600px;">
-        <el-row>
-          <el-col class="history_dialog_row_label">项目名称：</el-col>
-          <el-col class="history_dialog_row_desc">{{
-            fileObj.project_name || "暂无"
-          }}</el-col>
-        </el-row>
-        <el-row>
-          <el-col class="history_dialog_row_label">合同名称：</el-col>
-          <el-col class="history_dialog_row_desc">{{
-            fileObj.contract_name || "暂无"
-          }}</el-col>
-        </el-row>
-        <el-row>
-          <el-col class="history_dialog_row_label">
-            <span class="rule_item" style="margin-right: 4px;">*</span
-            >ITME合同阶段：
-          </el-col>
-          <el-col class="history_dialog_row_desc">
-            <el-select
-              size="mini"
-              v-model="fileObj.stage"
-              placeholder="请选择ITME合同阶段"
-            >
-              <el-option
-                v-for="fileStage in contractStepList"
-                :label="fileStage.value"
-                :value="fileStage.code"
-                :key="'stage_' + fileStage.id"
-              ></el-option>
-            </el-select>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col class="history_dialog_row_label">提交人：</el-col>
-          <el-col class="history_dialog_row_desc">{{ userName }}</el-col>
-        </el-row>
-        <div class="history_dialog_annotate">
-          注：归档后会将项目附件及评审单pdf文档存入ITME系统文档管理
-        </div>
-      </div>
-      <div slot="footer" style="text-align: center;">
-        <el-button
-          type="primary"
-          size="mini"
-          plain
-          @click="dialogVisible1 = false"
-          >取消</el-button
-        >
-        <el-button type="primary" size="mini" @click="handleKeepOnFileSubmit"
-          >确定</el-button
         >
       </div>
     </el-dialog>
@@ -455,11 +291,9 @@ export default {
   },
   mounted() {
     //加载表头和表格数据
+
     this.getTableHeader();
     this.getProjectList();
-
-    this.searchFormInline.bill_type = this.processCompList[0].code;
-    this.billType = this.searchFormInline.bill_type;
 
     window.onresize = () => {
       this.tableHeightChange();
@@ -552,7 +386,7 @@ export default {
           this.loading = false;
           if (res.resultCode === "0") {
             let result_data = JSON.parse(res.resultData);
-            console.log(result_data);
+            console.log("====result_data====:" + JSON.stringify(result_data));
             this.total = result_data.total || 0;
             this.projectList = this.projectList.concat(result_data.rows || []);
             this.projectList.map(el => {
@@ -590,8 +424,8 @@ export default {
           console.log(err);
         });
     },
-    /** 评审类型变化后 调用的方法 */
-    handleSelectBill(val) {
+    /** 状态变化后 调用的方法 */
+    handleSelectStatus(val) {
       this.searchFormInline.letter_status = val;
 
       this.billType = this.searchFormInline.letter_status;
@@ -599,13 +433,6 @@ export default {
     },
     /** 任务记录查询 查询按钮 */
     onSubmitSearch() {
-      // var x =
-      //   '{"rows":[{"limited_time":{"month":10,"timezoneOffset":-480,"day":1,"year":120,"time":1606665600000,"date":30,"seconds":0,"nanos":0,"minutes":0,"hours":0},"letter_name":"测试工作联系函1","letter_status":"0"}],"flag":1}';
-      // var obj = JSON.parse(x);
-      // var data = this.moment(obj.rows[0].limited_time).format(
-      //   "YYYY-MM-DD HH:mm:ss"
-      // );
-      //alert(data);
       this.getProjectList();
     },
     /** table 操作列 按钮方法 */
@@ -650,12 +477,7 @@ export default {
           content = "fileDetail";
           //return;
         }
-        //查看或修改
-        if (_type === "3") {
-          //修改
-          type = "edit";
-          title = "修改";
-        }
+
         let obj_params = {
           name: tabName,
           content: content,
@@ -667,100 +489,9 @@ export default {
           letter_id: rowData.letter_id
         };
         obj_params.title = title; //+ rowData.PROJECT_VIEW_TYPE_NAME;
-        if (rowData.TYPE === "8" || rowData.TYPE === "9") {
-          //安全评测
-          if (rowData.TYPE === "8") {
-            //安全评测确认单
-            obj_params.subId = rowData.APPLY_ID || "";
-          } else if (rowData.TYPE === "9") {
-            //安全评测申请单
-            obj_params.subId = rowData.CONFIRM_ID || "";
-          }
-          obj_params.bill_type = rowData.BILL_TYPE;
-          title += rowData.BILL_TYPE_NAME;
-          obj_params.title = title + "安全评测";
-        } else if (rowData.TYPE === "14") {
-          //用户确认签字
-          obj_params.bill_type = rowData.SIGN_STAGE;
-          title += rowData.SIGN_STAGE_NAME;
-          obj_params.title = title + rowData.PROJECT_VIEW_TYPE_NAME;
-        }
+
         this.$parent.$parent.$parent.tabsList.push(obj_params);
         this.$parent.$parent.$parent.activeName = tabName;
-      } else if (_type === "2") {
-        //撤回
-
-        this.getFormBack(rowData);
-      } else if (_type === "4") {
-        //打印
-        let href_url;
-        if (rowData.STORE_FILE_ID === null || rowData.STORE_FILE_ID === "") {
-          const { href } = this.$router.resolve({
-            path: "/printPdf",
-            query: {
-              projectId: rowData.ID,
-              code: this.searchFormInline.bill_type
-            }
-          });
-          href_url = href;
-        } else {
-          const { href } = this.$router.resolve({
-            path: "/projectPrint",
-            query: {
-              projectId: rowData.ID
-            }
-          });
-          href_url = href;
-        }
-
-        window.open(href_url, "_blank");
-      } else if (_type === "5") {
-        //删除
-
-        this.deleteForm(rowData);
-      } else if (_type === "6") {
-        //导出
-        // this.project_id = rowData.ID;
-        // this.project_code = this.searchFormInline.bill_type;
-        // this.project_title = '';
-        // if (rowData.TYPE === '8' || rowData.TYPE === '9') {
-        //   this.project_title = rowData.BILL_TYPE_NAME;
-        // }
-        //
-        // this.project_name = rowData.PROJECT_NAME;
-        // this.dialogTitle = rowData.PROJECT_NAME + this.project_title + rowData.PROJECT_VIEW_TYPE_NAME;
-        // this.dialogVisible = true;
-        /** pdf 名为 表单抬头+（项目名称） */
-        if (rowData.STORE_FILE_ID === null || rowData.STORE_FILE_ID === "") {
-          this.$message({
-            type: "warning",
-            message: "pdf还未生成，请稍后再试！"
-          });
-          return;
-        }
-
-        window.location.href =
-          this.GLOBAL.fileDownloadUrl +
-          "?module=workOrder&fileId=" +
-          rowData.STORE_FILE_ID;
-      } else if (_type === "7_") {
-        alert("这是归档");
-        return;
-        //归档
-        if (rowData.STORE_FILE_ID === null || rowData.STORE_FILE_ID === "") {
-          this.$message({
-            type: "warning",
-            message: "pdf还未生成，请稍后再试！"
-          });
-          return;
-        }
-
-        this.dialogVisible1 = true;
-        this.fileObj.stage = "";
-        this.fileObj.project_name = rowData.PROJECT_NAME;
-        this.fileObj.contract_name = rowData.CONTRACT_NAME;
-        this.fileObj.project_id = rowData.ID;
-        this.fileObj.file_id = rowData.STORE_FILE_ID;
       }
     },
     /** 打印页面 导出按钮 执行方法 */
@@ -899,147 +630,6 @@ export default {
             });
           });
       });
-    },
-    deleteForm(rowData) {
-      this.$confirm("此操作将删除表单，是否继续?", "提示", {
-        confirmButtonText: "是",
-        cancelButtonText: "否",
-        type: "warning"
-      }).then(() => {
-        let obj = {};
-        obj.serviceRoot = "project/deleteProjectReview";
-        obj.baseURL = "/itmsdrm";
-        obj.params = {
-          id: rowData.ID,
-          bill_type: rowData.TYPE
-        };
-        let type = "info";
-        let message = "";
-        this.requestDrmService(obj, this)
-          .then(res => {
-            if (res.resultCode === "0") {
-              let result_data = JSON.parse(res.resultData);
-              message = result_data.message;
-              if (result_data.flag) {
-                type = "success";
-                this.getProjectList();
-              } else {
-                type = "error";
-              }
-            } else {
-              type = "error";
-              message = "删除失败！";
-            }
-            this.$message({
-              type: type,
-              message: message
-            });
-          })
-          .catch(err => {
-            type = "error";
-            message = "删除失败！";
-            this.$message({
-              type: type,
-              message: message
-            });
-          });
-      });
-    },
-    /** table 操作列 撤回按钮 调用方法*/
-    getFormBack(rowData) {
-      this.$confirm("此操作将需评审的表单撤回, 是否继续?", "提示", {
-        confirmButtonText: "是",
-        cancelButtonText: "否",
-        type: "warning"
-      })
-        .then(() => {
-          let obj = {};
-          obj.serviceRoot = "project/cancelTaskApprove";
-          obj.baseURL = "/itmsdrm";
-          obj.params = {
-            id: rowData.ID,
-            bill_type: rowData.TYPE
-          };
-          let type = "info";
-          let message = "";
-          this.requestDrmService(obj, this)
-            .then(res => {
-              if (res.resultCode === "0") {
-                let result_data = JSON.parse(res.resultData);
-                if (result_data.flag) {
-                  type = "success";
-                  message = "操作成功！";
-                  this.getProjectList();
-                } else {
-                  type = "error";
-                  message = "操作失败！";
-                }
-              } else {
-                type = "error";
-                message = "操作失败！";
-              }
-              this.$message({
-                type: type,
-                message: message
-              });
-            })
-            .catch(err => {
-              type = "error";
-              message = "操作失败！";
-              this.$message({
-                type: type,
-                message: message
-              });
-              console.log(err);
-            });
-        })
-        .catch(() => {});
-    },
-    /** table 操作列 归档按钮 执行方法 */
-    handleKeepOnFileSubmit() {
-      console.log(this.fileObj);
-
-      let type = "info";
-      let message = "";
-      let obj = {};
-      obj.serviceRoot = "project/itms_gd";
-      obj.params = {
-        main_id: this.fileObj.project_id,
-        user_id: this.GLOBAL.userCode,
-        gd_stage_code: this.fileObj.stage
-      };
-
-      this.requestDrmService(obj, this)
-        .then(res => {
-          if (res.resultCode === "0") {
-            let result_data = JSON.parse(res.resultData);
-            if (result_data.msg === "success") {
-              type = "success";
-              message = "操作成功！";
-              this.dialogVisible1 = false;
-              this.getProjectList();
-            } else {
-              type = "error";
-              message = "操作失败！";
-            }
-          } else {
-            type = "error";
-            message = "操作失败！";
-          }
-          this.$message({
-            type: type,
-            message: message
-          });
-        })
-        .catch(err => {
-          type = "error";
-          message = "操作失败！";
-          this.$message({
-            type: type,
-            message: message
-          });
-          console.log(err);
-        });
     }
   }
 };

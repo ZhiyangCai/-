@@ -350,15 +350,15 @@ export default {
       return obj;
     },
     /** TODO 子组件获取 验收类别*/
-    getAcceptObj(val) {
-      let obj = {};
-      this.acceptList.map(el => {
-        if (el.code === val) {
-          obj = el;
-        }
-      });
-      return obj;
-    },
+    // getAcceptObj(val) {
+    //   let obj = {};
+    //   this.acceptList.map(el => {
+    //     if (el.code === val) {
+    //       obj = el;
+    //     }
+    //   });
+    //   return obj;
+    // },
     /** TODO 子组件获取 单据编码*/
     getProjectCode(val) {
       let obj = {};
@@ -405,44 +405,44 @@ export default {
       });
     },
     /** TODO 子组件 文件删除 */
-    deleteUploadFile(id, _type) {
-      let obj = {};
-      obj.params = {};
-      obj.methods = "get";
-      obj.serviceRoot = "transfer/business/file/delete?fileId=" + id;
-      obj.baseURL = "itmsdrm";
-      if (_type === "click") {
-        this.toolLoading();
-      }
-      this.requestFileDelete(obj, this)
-        .then(res => {
-          if (_type === "click") {
-            this.toolLoadClose();
-          }
-          let type = "";
-          if (res.resultCode === "0") {
-            type = "success";
-          } else {
-            type = "error";
-          }
-          if (_type === "click") {
-            this.$message({
-              type: type,
-              message: res.resultMessage
-            });
-          }
-        })
-        .catch(err => {
-          if (_type === "click") {
-            this.toolLoadClose();
-          }
-          this.$message({
-            type: "error",
-            message: "操作失败！"
-          });
-          console.log(err);
-        });
-    },
+    // deleteUploadFile(id, _type) {
+    //   let obj = {};
+    //   obj.params = {};
+    //   obj.methods = "get";
+    //   obj.serviceRoot = "transfer/business/file/delete?fileId=" + id;
+    //   obj.baseURL = "itmsdrm";
+    //   if (_type === "click") {
+    //     this.toolLoading();
+    //   }
+    //   this.requestFileDelete(obj, this)
+    //     .then(res => {
+    //       if (_type === "click") {
+    //         this.toolLoadClose();
+    //       }
+    //       let type = "";
+    //       if (res.resultCode === "0") {
+    //         type = "success";
+    //       } else {
+    //         type = "error";
+    //       }
+    //       if (_type === "click") {
+    //         this.$message({
+    //           type: type,
+    //           message: res.resultMessage
+    //         });
+    //       }
+    //     })
+    //     .catch(err => {
+    //       if (_type === "click") {
+    //         this.toolLoadClose();
+    //       }
+    //       this.$message({
+    //         type: "error",
+    //         message: "操作失败！"
+    //       });
+    //       console.log(err);
+    //     });
+    // },
     /** TODO 子组件 发起评审中 $loading */
     toolLoading() {
       this.saveLoading = this.$loading({

@@ -24,17 +24,18 @@ module.exports = {
         }
       },
       '/bpi': {//测试环境代理
-        target: 'http://10.156.5.145:8083', //源地址
+        target: 'http://10.156.5.12:9080', //源地址
         secure: false,
         bypass: function (req, res, proxyOptions) {
-          req.headers.referer = 'http://10.156.5.145:8083';
-          req.headers.host = '10.156.5.145';
+          req.headers.referer = 'http://10.156.5.12:9080';
+          req.headers.host = '10.156.5.12';
         },
         changeOrigin: true, //改变源
         pathRewrite: {
           '^/bpi': '' //路径重写
         }
-      },
+      }
+      ,
       '/financeTransport': {
         target: 'https://weixin.hbtobacco.cn',
         changeOrigin: true,

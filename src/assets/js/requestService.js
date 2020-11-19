@@ -1,6 +1,5 @@
 export default {
   install: function (Vue) {
-
     /** TODO 非dsm */
     Vue.prototype.requestDrmService = function (obj, that) {
       let timestamp = new Date().getTime();
@@ -25,10 +24,10 @@ export default {
 
       if (process.env.NODE_ENV === 'development') {//开发环境
         if (this.isNormal === 'true') {//正式环境
-          //baseUrl = '/api'
+          baseUrl = '/api'
           //baseUrl = '/mock/52/kjy-work-letter'
           //baseUrl = '/wxdsm/services'
-           baseUrl = 'https://weixintest.hbtobacco.cn'
+           //baseUrl = 'https://weixintest.hbtobacco.cn'
           // baseUrl = 'http://10.156.5.12:9080'
           
         } else if (this.isNormal === 'false') {//测试环境
@@ -40,7 +39,6 @@ export default {
 console.log("url:-------"+baseUrl + that.GLOBAL.serviceDsmPort + '/' + obj.serviceRoot);
 return new Promise((resolve, reject) => {
         that.$axios({
-          
           url: baseUrl + that.GLOBAL.serviceDsmPort + '/' + obj.serviceRoot,
           method: obj.methods,
           headers: {
@@ -57,6 +55,12 @@ return new Promise((resolve, reject) => {
       });
     };
 
+
+
+
+
+/*----------------------------暂时用不到-----------------------------*/
+
     /** TODO 附件 - 上传文件 */
     Vue.prototype.uploadFile = function (obj, formData, that) {
 
@@ -65,8 +69,7 @@ return new Promise((resolve, reject) => {
         let baseUrl = '';
         if (process.env.NODE_ENV === 'development') {//开发环境
           if (this.isNormal === 'true') {//正式环境
-           // baseUrl = '/api/'
-            baseUrl = 'https://weixintest.hbtobacco.cn/'
+           baseUrl = '/api/'
           } else if (this.isNormal === 'false') {//测试环境
             baseUrl = '/bpi/'
           }

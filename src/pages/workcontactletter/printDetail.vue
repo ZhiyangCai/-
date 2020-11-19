@@ -11,169 +11,253 @@
       id="printContent"
       :class="{ print_content_item: !printBtn }"
     >
-      <div id="designer_report_confirm">
+      <div class="print_component">
         <div class="project_form">
-          <div class="project_title">{{ projectTitle }}工作联系函</div>
+          <div class="project_title">工作联系函</div>
           <div
             style="height:100%;background:white;margin-top:10px;padding:0px 40px;"
           >
             <el-form
-              :model="formData"
-              :rules="rules"
-              ref="formRef"
+              ref="formRef_"
               size="small"
               :show-message="showMessage"
               label-position="left"
               label-width="150px"
             >
+              <!-- 任务名称 -->
               <el-row>
                 <el-col :span="24">
-                  <el-form-item
-                    style="margin:0px;padding:0px;"
-                    label-width="100%"
-                    label="武汉问道信息技术有限公司应用软件部"
-                  >
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="24">
-                  <el-form-item
-                    style="margin:0px;padding:0px;"
-                    label="任务名称"
-                    prop="project_name"
-                  >
-                    黄鹤楼科技园工程中心
+                  <el-form-item label="任务名称" prop="project_name">
                     <!-- <el-input
-                  disabled="false"
-                  v-model="formData.contract_code"
-                ></el-input> -->
+                      :disabled="isReadonly"
+                      v-model="letter_name"
+                    ></el-input> -->
+                    {{ letter_name }}
                   </el-form-item>
                 </el-col>
               </el-row>
-              <div v-for="(item, i) in [1, 2]" :key="i">
-                <el-divider>任务发送时间 2020-11-05</el-divider>
-                <div
-                  class="func_list_item_"
-                  style="margin-top:10px;margin-bottom:10px;"
-                >
-                  <table
-                    style="border-collapse:collapse;width:100%;display:none"
-                    border="1"
-                    cellpadding="0"
-                    cellspacing="0"
-                  >
-                    <thead>
-                      <tr>
-                        <td>序号</td>
-                        <td>带实施工作项</td>
-                      </tr>
-                    </thead>
-                  </table>
-                  <!-- 待实施工作内容（只读部分） start-->
-                  <el-table
-                    border
-                    ref="multipleTable"
-                    :data="tableData"
-                    tooltip-effect="dark"
-                    style="width: 100%;"
-                  >
-                    <!-- width="50" -->
-                    <el-table-column
-                      header-align="center"
-                      align="center"
-                      type="index"
-                      label="序号"
-                      width="50"
+              <div
+                class="work_item"
+                v-for="item in workDataList"
+                :key="'work_item_' + item.send_time"
+              >
+                <el-divider>任务发送时间 {{ item.send_time }}</el-divider>
+                <!-- 限定完成时间 -->
+                <!-- <el-row>
+                  <el-col :span="12">
+                    <el-form-item label="限定完成时间">
+                      <el-date-picker
+                        :disabled="isReadonly"
+                        v-model="item.limited_time"
+                        type="date"
+                        placeholder="请选择签字日期"
+                      ></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item
+                      v-if="isReadonly"
+                      class="personCenter"
+                      style="padding-right:0px"
+                      label-width="100px"
+                      label="责任人"
+                      prop="project_execute_dept_name"
                     >
-                    </el-table-column>
+                      <div class="sign_div">
+                        <span v-for="(dept_name, i) in item.iprincipal_list">
+                          <span>
+                            <span
+                              >{{ dept_name.pname }}
+                            </span>
+                            <span v-if="i !== item.iprincipal_list.length - 1"
+                              >；</span
+                            >
+                          </span>
+                        </span>
+                      </div>
+                    </el-form-item>
 
-                    <!-- <el-table-column
-                  header-align="center"
-                prop="address"
-                label="待实施工作项内容"
-                show-overflow-tooltip>
-              </el-table-column> -->
-
-                    <el-table-column
-                      header-align="center"
-                      prop="name"
-                      label="待实施工作项内容"
-                      align="center"
+                    <el-form-item
+                      v-else
+                      class="personCenter"
+                      style="padding-right:30px"
+                      label-width="100px"
+                      label="责任人"
+                      prop="project_execute_dept_name"
                     >
-                      <!-- <template slot-scope="scope" >            
-                  <el-input
-                    contenteditable="true"
-                    placeholder=""/>     
-                </template> -->
-                      <template slot-scope="scope">
+                      <div style="position: relative;">
                         <el-input
-                          disabled="false"
-                          v-model="scope.row.name"
+                          v-model="formData.project_execute_dept_name"
+                          placeholder="请选择责任人"
+                          :disabled="false"
+                          readonly
+                        ></el-input>
+                        <span
+                          v-if="
+                            formData.project_execute_dept_name != '' //&& !isReadonly
+                          "
+                          class="clear_input_item"
+                          @click="handleUserDelete('project_execute_dept_name')"
+                        >
+                          <span class="el-icon-circle-close"></span>
+                        </span>
+                      </div>
+                      <i
+                        style="position:absolute;right:-30px;top:5px"
+                        class="el-icon-circle-plus add_user_img"
+                        @click="
+                          handleAddUsers(
+                            'project_execute_dept_name',
+                            '责任人',
+                            false
+                          )
+                        "
+                      ></i>
+                    </el-form-item>
+                  </el-col>
+                </el-row> -->
+                <!-- 责任单位 -->
+                <!-- <el-row>
+                  <el-col :span="12">
+                    <el-form-item label="责任单位（部门）" prop="contract_code">
+                      <el-input
+                        :disabled="isReadonly"
+                        v-model="item.iprincipal_list[0].imple_depart"
+                      ></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row> -->
+                <!-- 待实施工作内容（只读部分） start-->
+
+                <table border="1" class="tabledata">
+                  <thead>
+                    <th style="width:50px">序号</th>
+                    <th>带实施工作项内容</th>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(obj, i) in item.content_list" :key="i">
+                      <td>{{ i + 1 }}</td>
+                      <td>
+                        <el-input
+                          :disabled="isReadonly"
+                          v-model="obj.letter_content"
                           placeholder=""
                         />
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                  <!-- 待实施工作内容（只读部分） end-->
-
-                  <!-- 实施情况描述start -->
-                  <el-table
-                    :data="implementationTableData"
-                    border
-                    style="width: 100%;margin-top:20px;"
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- <el-table
+                  border
+                  ref="multipleTable"
+                  :data="item.content_list"
+                  tooltip-effect="dark"
+                  style="width: 100%"
+                >
+                  <el-table-column
+                    header-align="center"
+                    align="center"
+                    type="index"
+                    label="序号"
+                    width="50"
                   >
-                    <el-table-column
-                      header-align="center"
-                      align="center"
-                      type="index"
-                      label="序号"
-                      width="50"
-                    >
-                    </el-table-column>
-                    <!-- min-width="300" -->
-                    <el-table-column
-                      align="center"
-                      header-align="center"
-                      prop="a"
-                      label="实施情况描述"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      header-align="center"
-                      prop="b"
-                      label="责任人"
-                      width="180"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      header-align="center"
-                      prop="c"
-                      label="完成时间"
-                    >
-                    </el-table-column>
-                  </el-table>
-                  <!-- 实施情况描述end -->
-                </div>
+                  </el-table-column>
+
+                  <el-table-column
+                    header-align="center"
+                    prop="letter_content"
+                    label="待实施工作项内容"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <el-input
+                        :disabled="isReadonly"
+                        v-model="scope.row.letter_content"
+                        placeholder=""
+                      />
+                    </template>
+                  </el-table-column>
+                </el-table> -->
+                <!-- 待实施工作内容（只读部分） end-->
+                <!-- 实施情况描述start -->
+
+                <table style="margin-top:10px" border="1" class="tabledata">
+                  <thead>
+                    <th style="width:50px">序号</th>
+                    <th>实施情况描述</th>
+                    <th>责任人</th>
+                    <th>完成时间</th>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(obj, i) in item.iprincipal_list" :key="i">
+                      <td>{{ i + 1 }}</td>
+                      <td>
+                        {{ obj.work_describe }}
+                      </td>
+                      <td>{{ obj.pname }}</td>
+                      <td>
+                        {{
+                          obj.finish_time
+                            ? moment(obj.finish_time).format(
+                                "YYYY-MM-DD HH:mm:ss"
+                              )
+                            : ""
+                        }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- <el-table
+                  :data="item.iprincipal_list"
+                  border
+                  style="width: 100%;margin-top:20px;"
+                >
+                  <el-table-column
+                    align="center"
+                    header-align="center"
+                    prop="work_describe"
+                    label="实施情况描述"
+                    min-width="300"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    header-align="center"
+                    prop="pname"
+                    label="责任人"
+                    width="180"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    header-align="center"
+                    prop="finish_time"
+                    label="完成时间"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    header-align="center"
+                    label="附件"
+                  >
+                    <template slot-scope="scope">
+                      <a
+                        v-for="(fileitem, i) in scope.row.file_list"
+                        target="_blank"
+                        :href="fileitem.emc_url"
+                        :download="fileitem.file_name"
+                        >{{ fileitem.file_name }}&nbsp;&nbsp;</a
+                      >
+                    </template>
+                  </el-table-column>
+                </el-table> -->
+                <!-- 实施情况描述end -->
               </div>
-              <el-divider></el-divider>
-
-              <p style="text-align:right;font-size:14px">
-                新型烟草制品工程中心
+              <p style="text-align:right">新型烟草制品工程中心</p>
+              <p style="text-align:right">
+                {{ moment(new Date()).format("YYYY年MM月DD日") }}
               </p>
-              <p style="text-align:right;font-size:14px">2020年11月3日</p>
-
-              <!-- 底部按钮start -->
-              <!-- <el-row>
-                <el-col :span="24">
-                  <div style="text-align:center;margin:30px">
-                    <el-button type="primary">打印</el-button>
-                  </div>
-                </el-col>
-              </el-row> -->
-              <!-- 底部按钮end -->
             </el-form>
           </div>
         </div>
@@ -220,6 +304,22 @@
   </div>
 </template>
 <style scoped media="print">
+.tabledata {
+  width: 100%;
+  border: 1px solid #e4e7ed;
+  border-collapse: collapse;
+  text-align: center;
+}
+.tabledata th {
+  white-space: nowrap;
+}
+.tabledata th,
+.tabledata td {
+  height: 45px;
+  padding: 5px;
+  word-wrap: break-word;
+  word-break: normal;
+}
 #project_print {
   height: 100%;
   padding: 0 10px;
@@ -237,6 +337,9 @@
 
 #printContent .print_component {
   min-width: 650px;
+  margin: 0px auto;
+  height: 100%;
+  overflow: auto;
 }
 
 #project_print .print_btn {
@@ -273,24 +376,10 @@ export default {
   },
   data() {
     return {
-      //实施情况描述表格数据
-      implementationTableData: [
-        {
-          a: "工作联系函需求调研",
-          b: "张三",
-          c: "2020-11-04"
-        }
-      ],
-      tableData: [
-        {
-          id: 1,
-          name: "工作内容1"
-        },
-        {
-          id: 2,
-          name: "工作内容2"
-        }
-      ],
+      nowDate: "",
+      workDataList: [],
+      letter_id: "",
+
       multipleSelection: [],
 
       /** 校验信息 */
@@ -441,22 +530,46 @@ export default {
     }
   },
   mounted() {
-    this.projectTitle = this.$parent.$parent.$parent.projectTitle;
-    this.projectCode = this.$parent.$parent.$parent.getProjectCode(
-      this.billCode
-    ).label;
-    if (this.projectType === "add" || this.projectType === "edit") {
-      this.isReadonly = false;
-    } else {
-      this.isReadonly = true;
-    }
+    this.letter_id = this.$route.query.letter_id;
     this.getProjectListData();
-
-    if (this.projectType !== "add") {
-      this.getFormData();
-    }
   },
   methods: {
+    //打印
+    handlePrint() {
+      consol.log("====打印！====");
+      // let dom = document.querySelector(".print_component");
+      // this.$print(dom);
+      let dom = document
+        .querySelector(".print_component")
+        .getElementsByClassName("project_title");
+      let domTitle = dom[0].innerHTML;
+      // let appendTitle =
+      //   "（" +
+      //   this.project_name +
+      //   (this.project_title.length > 0 ? "-" + this.project_title : "") +
+      //   "）";
+      //this.getPdf("printContent", domTitle + appendTitle);
+      this.getPdf("printContent", domTitle);
+
+      /*---------------------------分隔符---------------------------*/
+      return;
+      // if (!!window.ActiveXObject || "ActiveXObject" in window) {
+      //   //是否ie
+      //   this.remove_ie_header_and_footer();
+      // }
+      // let dom = document.querySelector(".print_component");
+      // this.$print(dom);
+    },
+    remove_ie_header_and_footer() {
+      let hkey_path;
+      hkey_path =
+        "HKEY_CURRENT_USER\\Software\\Microsoft\\Internet Explorer\\PageSetup\\";
+      try {
+        let RegWsh = new ActiveXObject("WScript.Shell");
+        RegWsh.RegWrite(hkey_path + "header", "");
+        RegWsh.RegWrite(hkey_path + "footer", "");
+      } catch (e) {}
+    },
     //增加一行表格
     handleAddDetails() {
       if (this.tableData == undefined) {
@@ -496,19 +609,149 @@ export default {
     getProjectListData() {
       let obj = {};
       obj.params = {
-        type: this.billCode
+        data: {
+          row: [
+            {
+              letter_id: this.letter_id,
+
+              loggedUser: {
+                path: "1/S00000000000003/S00000000012424",
+                weight: "1",
+                id: this.GLOBAL.userCode
+              }
+            }
+          ]
+        },
+        head: {
+          msg_code: "work_letter_detail",
+          msg_id: "work_letter_detail",
+          request_time: "",
+          source_sys: "prodsm",
+          service_class: "WorkLetter",
+          target_sys: "MOBILE",
+          user_id: "admin",
+          user_key: "admin"
+        }
       };
-      obj.serviceRoot = "project/searchProjectByJudge";
-      obj.baseURL = "/itmsdrm";
+      obj.serviceRoot = "WorkLetter/work_letter_detail";
       this.requestDrmService(obj, this)
         .then(res => {
           if (res.resultCode === "0") {
+            //let result_data = JSON.parse(res.resultData).map;
             let result_data = JSON.parse(res.resultData);
-            this.projectOptions = result_data.rows;
+            this.workDataList = result_data.rows;
+            console.log("----result_data----:" + JSON.stringify(result_data));
+            //工作联系函实施表id
+            this.letter_implement_id = result_data.rows[0].letter_implement_id;
+            this.letter_name = result_data.letter_name;
+            this.letter_status = result_data.letter_status;
+
+            this.state = result_data.state;
+            this.formData.project_id = result_data.project_id;
+            this.formData.project_code = result_data.project_code;
+            this.formData.project_name = result_data.project_name;
+            if (
+              this.formData.project_code === "" ||
+              this.formData.project_code === null
+            ) {
+              this.formData.project_id1 = "";
+            } else {
+              this.formData.project_id1 = result_data.project_id;
+            }
+            this.formData.sign_date = result_data.sign_date;
+
+            this.formData.contract_code = result_data.contract_code;
+            this.formData.contract_name = result_data.contract_name;
+            this.multi_contract = result_data.multi_contract;
+
+            this.getContractList(
+              this.formData.project_id,
+              "search",
+              result_data.contract_id
+            );
+            this.formData.project_execute_dept_name_ids = [];
+            this.formData.project_execute_dept_name = "";
+            result_data.project_execute_dept_name.map(el => {
+              this.formData.project_execute_dept_name +=
+                (el.dept_name ? el.dept_name + "/" : "") +
+                el.dept_user_name +
+                "；";
+              el.user_id = el.dept_user_id;
+              el.user_name = el.dept_user_name;
+              el.dept_type = el.type;
+              el.msg = el.msg || "";
+              this.formData.project_execute_dept_name_ids.push(el);
+            });
+            if (this.formData.project_execute_dept_name.length > 0) {
+              this.formData.project_execute_dept_name = this.formData.project_execute_dept_name.substring(
+                0,
+                this.formData.project_execute_dept_name.length - 1
+              );
+            }
+
+            this.formData.biz_about_dept_name_ids = [];
+            this.formData.biz_about_dept_name = "";
+            result_data.biz_about_dept_name.map(el => {
+              this.formData.biz_about_dept_name +=
+                (el.dept_name ? el.dept_name + "/" : "") +
+                el.dept_user_name +
+                "；";
+              el.user_id = el.dept_user_id;
+              el.user_name = el.dept_user_name;
+              el.dept_type = el.type;
+              el.msg = el.msg || "";
+              this.formData.biz_about_dept_name_ids.push(el);
+            });
+            if (this.formData.biz_about_dept_name.length > 0) {
+              this.formData.biz_about_dept_name = this.formData.biz_about_dept_name.substring(
+                0,
+                this.formData.biz_about_dept_name.length - 1
+              );
+            }
+
+            this.formData.biz_comp_dept_name_ids = [];
+            this.formData.biz_comp_dept_name = "";
+            result_data.biz_comp_dept_name.map(el => {
+              this.formData.biz_comp_dept_name +=
+                (el.dept_name ? el.dept_name + "/" : "") +
+                el.dept_user_name +
+                "；";
+              el.user_id = el.dept_user_id;
+              el.user_name = el.dept_user_name;
+              el.dept_type = el.type;
+              el.msg = el.msg || "";
+              this.formData.biz_comp_dept_name_ids.push(el);
+            });
+            if (this.formData.biz_comp_dept_name.length > 0) {
+              this.formData.biz_comp_dept_name = this.formData.biz_comp_dept_name.substring(
+                0,
+                this.formData.biz_comp_dept_name.length - 1
+              );
+            }
+
+            this.formData.provider_name_ids = [];
+            this.formData.provider_name = "";
+            result_data.provider_name.map(el => {
+              this.formData.provider_name +=
+                (el.dept_name ? el.dept_name + "/" : "") +
+                el.dept_user_name +
+                "；";
+              el.user_id = el.dept_user_id;
+              el.user_name = el.dept_user_name;
+              el.dept_type = el.type;
+              el.msg = el.msg || "";
+              this.formData.provider_name_ids.push(el);
+            });
+            if (this.formData.provider_name.length > 0) {
+              this.formData.provider_name = this.formData.provider_name.substring(
+                0,
+                this.formData.provider_name.length - 1
+              );
+            }
           }
         })
         .catch(err => {
-          console.log(err);
+          console.log("服务异常", err);
         });
     },
     /** 项目基本信息 - 项目 change */
@@ -1081,9 +1324,5 @@ export default {
   padding: 10px 0;
   background: white;
   /* color: #409eff; */
-}
-#designer_report_confirm {
-  height: 100%;
-  overflow: auto;
 }
 </style>
