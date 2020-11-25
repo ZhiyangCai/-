@@ -199,10 +199,10 @@
                       :file-list="formData.file_list"
                       class="upload-demo"
                       :action="uploadUrl"
-                      :auto-upload="isAutoupload"
+                      :auto-upload="!isAutoupload"
                       :show-file-list="false"
                       multiple
-                      :on-success="handleChangeFile2"
+                      :on-change="handleChangeFile"
                       :on-error="handleAvatarError" 
                     >
                       <div slot="trigger">
@@ -216,7 +216,6 @@
                       </div>
 
                       <div class="file_list">
-
                       <el-row
                           class="file_list_row"
                           v-for="(file, i) in formData.file_list"
@@ -231,12 +230,9 @@
                               type="text"
                               size="mini"
                               @click="
-                                handleDeleteFile(
-                                  file.id,
+                                handleDeleteFile(file.id,
                                   file.file_name,
-                                  'attach'
-                                )
-                              "
+                                  'attach')"
                             >
                               <span class="el-icon-close"></span>
                             </el-button>
@@ -355,7 +351,7 @@ export default {
       multipleSelection: [],
 
       /** 校验信息 */
-      showMessage: true,
+      showMessage: false,
 
       loading: false, //接口加载状态 true 加载中 ，false 加载完
 
@@ -578,7 +574,7 @@ export default {
     }
   },
   mounted() {
-    /*路由参数*/
+    /*路由传参(还需要userCode)*/
     this.letter_id = this.$route.query.letter_id;
     this.letter_implement_id = this.$route.query.letter_implement_id;
     this.letter_principal_id = this.$route.query.letter_principal_id;
@@ -610,7 +606,14 @@ export default {
       });
     },
     /** TODO 文件上传后 $loading 关闭*/
-    handleUploadError(err, file, fileList) {
+    handleUploadSuccess(err, file, fileList) {
+      this.fileUploading.close();
+      this.$message({
+        type: "success",
+        message: "上传成功！"
+      });
+    },
+      handleUploadError(err, file, fileList) {
       this.fileUploading.close();
       this.$message({
         type: "error",
@@ -623,7 +626,7 @@ export default {
       this.showMessage=true;
       this.$refs.formRef.validate(valid => {
         if (valid) {
-          /*------执行操作------*/
+          /*------执行操作(关联附件部分)------*/
           var fileList=[];
           for(var i=0;i<this.formData.file_list.length;i++)
           {
@@ -634,7 +637,7 @@ export default {
               fileList.push(item);
           }
           let obj = {};
-          obj.serviceRoot = "WxbusinessAttachment/WxbusinessAttachment";
+          obj.serviceRoot = "prodsm/WxbusinessAttachment/WxbusinessAttachment";
           obj.params = {
                 "data":{
                     "row":[
@@ -666,7 +669,7 @@ export default {
                   this.saveDetail();
                  }
                  else{
-                   this.submimtDetail();
+                   this.submitDetail();
                  }
                   console.log("上传文件成功：----", res);
                 }
@@ -689,14 +692,14 @@ export default {
         }
       });
     },
-    //提交明细操作
-    submimtDetail(){
+    //提交明细操作 
+    submitDetail(){
         var date = this.moment(this.formData.finish_time).format(
             "YYYY-MM-DD HH:mm:ss"
           );
           this.formData.finish_time = date;
           let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_iprincipal_submit";
+          obj.serviceRoot = "prodsm/WorkLetter/work_letter_iprincipal_submit";
           obj.params = {
                  "data": {
                         "row" :[{
@@ -724,12 +727,51 @@ export default {
             .then(res => {
               this.loading = false;
                  if (res.resultCode === "0") {
+              let result_data = JSON.parse(res.resultData);
+
+               //提交待办接口
+                  let objItem = {};
+                  objItem.serviceRoot =
+                    "wpdbDS/wxapprovemanger/wxapprovemanger";
+                  objItem.params = {
+                    data: {
+                      row: [result_data.data]
+                    },
+                    head: {
+                      msg_code: "wxapprovemanger",
+                      msg_id: "wxapprovemanger",
+                      request_time: "",
+                      source_sys: "wpdbDS",
+                      service_class: "wxapprovemanger",
+                      target_sys: "MOBILE",
+                      user_id: "admin",
+                      user_key: "admin"
+                    }
+                  };
+                  this.requestDrmService(objItem, this)
+                    .then(r => {
+                      if (r.resultCode === "0") {
+                        console.log("==submitSuccess==");
+                      }
+                    })
+                    .catch(e => {
+                      this.loading = false;
+                      this.$message({
+                        type: "error",
+                        message: "提交失败"
+                      });
+                      return;
+                      console.log("==submitError==", e);
+                    });
+
                  this.$message({
                       message: "提交成功",
                       type: "success"
                   });
-                   window.location.href="about:blank";
-                window.close();
+                   //页面关闭或回退
+                  //this.$router.go(-1);
+                  window.location.href="about:blank";
+                  window.close();
                 }
                 else {
                     this.$message({
@@ -755,7 +797,7 @@ export default {
           );
           this.formData.finish_time = date;
           let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_iprincipal_save";
+          obj.serviceRoot = "prodsm/WorkLetter/work_letter_iprincipal_save";
           obj.params = {
                   "data": {
                     "row" :[{
@@ -786,8 +828,10 @@ export default {
                       message: "保存成功",
                       type: "success"
                   });
+                  //页面关闭或回退
+                  //this.$router.go(-1);
                   window.location.href="about:blank";
-                window.close();
+                  window.close();
               
                 }
                 else {
@@ -928,16 +972,16 @@ export default {
           user_key: "admin"
         }
       };
-      obj.serviceRoot = "WorkLetter/work_letter_iprincipal_select";
+      obj.serviceRoot = "prodsm/WorkLetter/work_letter_iprincipal_select";
       // obj.serviceRoot = "project/designReportByIdQuery";
       // obj.baseURL = "/itmsdrm";
       console.log("obj.params:--------" + JSON.stringify(obj.params));
       this.loading = true;
       this.requestDrmService(obj, this)
         .then(res => {
+            this.loading = false;
           if (res.resultCode === "0") {
             let result_data = JSON.parse(res.resultData);
-
             this.formData.letter_name = result_data.rows[0].letter_name; //任务名称
             this.formData.limited_time = result_data.rows[0].limited_time; //限定完成时间
             this.formData.imple_depart = result_data.rows[0].imple_depart;
@@ -945,7 +989,6 @@ export default {
             this.formData.letter_contents = result_data.rows[0].content_list;
             this.formData.file_list = result_data.rows[0].file_list;
 
-            this.loading = false;
             /**/
             /**/
             /**/
@@ -1021,58 +1064,91 @@ export default {
             type: "error"
           });
     },
-    //上传前
-   beforeAvatarUpload(file) {
-        // const isJPG = file.type === 'image/jpeg';
-        // const isLt2M = file.size / 1024 / 1024 < 2;
-        // if (!isJPG) {
-        //   this.$message.error('上传头像图片只能是 JPG 格式!');
-        // }
-        // if (!isLt2M) {
-        //   this.$message.error('上传头像图片大小不能超过 2MB!');
-        // }
-        // return isJPG && isLt2M;
-       var yn="n";
-       this.$confirm("确定上传吗？", "提示", {
+    //上传前(暂时不用)
+  //  beforeAvatarUpload(file) {
+  //       // const isJPG = file.type === 'image/jpeg';
+  //       // const isLt2M = file.size / 1024 / 1024 < 2;
+  //       // if (!isJPG) {
+  //       //   this.$message.error('上传头像图片只能是 JPG 格式!');
+  //       // }
+  //       // if (!isLt2M) {
+  //       //   this.$message.error('上传头像图片大小不能超过 2MB!');
+  //       // }
+  //       // return isJPG && isLt2M;
+  //      var yn="n";
+  //      this.$confirm("确定上传吗？", "提示", {
+  //       confirmButtonText: "是",
+  //       cancelButtonText: "否",
+  //       type: "warning"
+  //     }).then(() => {
+  //      yn="y";
+  //     this.isAutoupload=true;
+  //     }).catch(() => {
+  //       yn="n";
+  //       });
+  //      if(yn==="y")
+  //      {
+  //         return true
+  //      }
+  //      else{
+  //         return false
+  //      }
+       
+  //     },
+      //上传成功(上传文件操作)
+    handleChangeFile(file, fileList) {
+      /*----------设置auto-upload为true，成功后的上传（暂时不用）-----------*/
+      // console.log("==========file-----------:",file);
+      //     var obj = {
+      //     id: "",
+      //     tranceId: "",
+      //     attachName: file.resultData.attachName,
+      //     attachUrl: file.resultData.attachUrl,
+      //     attachExt: file.resultData.attachExt,
+      //     attachSize: file.resultData.attachSize
+      //   };
+      //   this.uploadImages.push(obj);
+      //   var fileobj={
+      //     emc_url:file.resultData.attachUrl,
+      //     file_name: file.resultData.attachName
+      //   }
+      //   this.formData.file_list.push(fileobj);
+      //   console.log("==this.ssuploadImages",this.uploadImages);
+/*--------------------文件状态改变时（无论上传成功还是失败都会被调用）----------------------*/
+ this.$confirm("确定上传吗？", "提示", {
         confirmButtonText: "是",
         cancelButtonText: "否",
         type: "warning"
       }).then(() => {
-       yn="y";
-      this.isAutoupload=true;
-      }).catch(() => {
-        yn="n";
-        });
-       if(yn==="y")
-       {
-          return true
-       }
-       else{
-          return false
-       }
-       
-       
-      },
-      //上传成功
-    handleChangeFile2(file, fileList) {
-      console.log("==========file-----------:",file);
-          var obj = {
-          id: "",
-          tranceId: "",
-          attachName: file.resultData.attachName,
-          attachUrl: file.resultData.attachUrl,
-          attachExt: file.resultData.attachExt,
-          attachSize: file.resultData.attachSize
-        };
-        this.uploadImages.push(obj);
-
+        this.handleProgress();
+        var formData = new FormData(); //构造一个 FormData，把后台需要发送的参数添加
+        formData.append("file", file.raw); //接口需要传的参数
+        this.$axios({
+        method: "post",
+        //服务器上传地址 
+        url: "/financeTransport/wechat/file/upload",
+        data: formData, //（名字是后台接口参数确定的）
+        headers: {
+          // 修改请求头
+          "Content-Type": "multipart/form-data"
+        }
+      }).then(res => {
+        console.log("====success====",res.data.resultData);
+        this.handleUploadSuccess();
         var fileobj={
-          emc_url:file.resultData.attachUrl,
-          file_name: file.resultData.attachName
+            emc_url:res.data.resultData.attachUrl,
+            file_name: res.data.resultData.attachName
         }
         this.formData.file_list.push(fileobj);
-        console.log("==this.ssuploadImages",this.uploadImages);
-      // this.formData.upload_list_attach = [];
+        //alert(JSON.stringify(JSON.parse(res.data.resultData)));
+       }).catch((error)=>{
+        this.handleUploadError();
+        console,log("====error====",error);
+        });
+      });
+
+
+     // this.formData.upload_list_attach = [];
       // this.$confirm("确定上传吗？", "提示", {
       //   confirmButtonText: "是",
       //   cancelButtonText: "否",
@@ -1354,53 +1430,6 @@ export default {
     //   this.$refs.formRef.clearValidate();
     //   this.checkProjectSelect("1");
     // },
-    /** 推送至审核人员 */
-    handleSendToJudge() {
-      //推送到确认人
-      this.showMessage = true;
-      this.$refs.formRef.validate(valid => {
-        if (valid) {
-          this.showMessage = false;
-          this.$confirm("此操作将表单推送至审核人员, 是否继续?", "提示", {
-            confirmButtonText: "是",
-            cancelButtonText: "否",
-            type: "warning"
-          })
-            .then(() => {
-              // this.state = '2';
-              this.checkProjectSelect("2");
-            })
-            .catch(() => {});
-        } else {
-          console.log("error submit!!");
-          setTimeout(() => {
-            const isError = document.getElementsByClassName("is-error");
-            if (isError[0].querySelector("input")) {
-              isError[0].querySelector("input").focus();
-            }
-            if (isError[0].querySelector("textarea")) {
-              isError[0].querySelector("textarea").focus();
-            }
-          }, 100);
-          return false;
-        }
-      });
-    },
-    /** 催办 */
-    handleApprove() {
-      this.$confirm("此操作是催办还没审核的人员, 是否继续?", "提示", {
-        confirmButtonText: "是",
-        cancelButtonText: "否",
-        type: "warning"
-      })
-        .then(() => {
-          this.$parent.$parent.$parent.handleApprove(
-            this.projectId,
-            this.billCode
-          );
-        })
-        .catch(() => {});
-    }
   }
 };
 </script>
@@ -1416,6 +1445,8 @@ export default {
 }
 .project_form {
   padding: 10px 20px;
+  background: #e4e7ed;
+
 }
 .project_title {
   text-align: center;

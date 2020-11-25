@@ -4,8 +4,8 @@ const userName = sessionStorage.getItem('userName');
 
 //const serviceItmsPort = '/transfer/api/dsm';
 //const serviceItmsPort = '/admin/prodsm';
-const serviceItmsPort = '/wxdsm/services/admin/prodsm';
-
+//const serviceItmsPort = '/wxdsm/services/admin/prodsm';
+const serviceItmsPort = '/wxdsm/services/admin';
 const serviceDsmPort = serviceItmsPort; //服务接口目录
 
 //测试环境

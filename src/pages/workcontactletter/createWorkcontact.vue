@@ -228,7 +228,7 @@ export default {
       multipleSelection: [],
 
       /** 校验信息 */
-      showMessage: true,
+      showMessage: false,
 
       loading: false, //接口加载状态 true 加载中 ，false 加载完
 
@@ -280,10 +280,10 @@ export default {
         ],
         limited_time: [
           {
-            type: "date",
+            //type: "date",
             // trigger: "change",
-            trigger: "blur",
             required: true,
+            trigger: "blur",
             message: "请选择限定完成时间"
           }
         ],
@@ -291,13 +291,13 @@ export default {
           {
             required: true,
             trigger: "blur",
-
             message: "请填写责任单位（部门）"
           }
         ],
         project_execute_dept_name: [
           {
             required: true,
+            trigger: "blur",
             message: "请选择责任人"
           }
         ]
@@ -340,12 +340,7 @@ export default {
   methods: {
     /*------提交事件------*/
     onSubmit() {
-      // this.$confirm(`确定提交？`, "提示", {
-      //   confirmButtonText: "是",
-      //   cancelButtonText: "否",
-      //   type: "warning"
-      // }).then(() => {}).catch(() => {});
-      //this.$router.push({ path: "/printDetail", query: { stage: "" } });
+      this.rules.project_execute_dept_name[0].required = true;
       this.showMessage = true;
       this.$refs.formRef.validate(valid => {
         if (valid) {
@@ -382,7 +377,7 @@ export default {
           }
 
           let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_submit";
+          obj.serviceRoot = "prodsm/WorkLetter/work_letter_submit";
           obj.params = {
             data: {
               row: [
@@ -393,8 +388,7 @@ export default {
                   imple_uses: this.formData.imple_uses, //["99100774", "99100778"],
                   imple_depart: this.formData.imple_depart,
                   loggedUser: {
-                    path: "1/S00000000000003/S00000000012424",
-                    weight: "1",
+                    name: this.formData.letter_name,
                     id: this.GLOBAL.userCode
                   }
                 }
@@ -416,11 +410,49 @@ export default {
           this.requestDrmService(obj, this)
             .then(res => {
               this.loading = false;
+              let result_data = JSON.parse(res.resultData);
+              if (result_data.result_list.length > 0) {
+                //循环提交待办接口
+                for (let i = 0; i < result_data.result_list.length; i++) {
+                  let objItem = {};
+                  objItem.serviceRoot =
+                    "wpdbDS/wxapprovemanger/wxapprovemanger";
+                  objItem.params = {
+                    data: {
+                      row: [result_data.result_list[i]]
+                    },
+                    head: {
+                      msg_code: "wxapprovemanger",
+                      msg_id: "wxapprovemanger",
+                      request_time: "",
+                      source_sys: "wpdbDS",
+                      service_class: "wxapprovemanger",
+                      target_sys: "MOBILE",
+                      user_id: "admin",
+                      user_key: "admin"
+                    }
+                  };
+                  this.requestDrmService(objItem, this)
+                    .then(r => {
+                      if (r.resultCode === "0") {
+                        console.log("==submitSuccess==");
+                      }
+                    })
+                    .catch(e => {
+                      this.loading = false;
+                      this.$message({
+                        type: "error",
+                        message: "提交失败"
+                      });
+                      console.log("==submitError==", e);
+                    });
+                }
+              }
               this.$message({
                 type: "success",
                 message: "提交成功"
               });
-              /*---------保存成功后重置----------*/
+              /*---------提交成功后重置----------*/
               this.formData.letter_name = "";
               this.formData.limited_time = "";
               this.checkedList = [];
@@ -428,6 +460,7 @@ export default {
               this.formData.imple_depart = "";
               this.formData.letter_contents = [];
               this.showMessage = false;
+              this.rules.project_execute_dept_name[0].required = false;
               console.log("提交成功：----", res);
             })
             .catch(err => {
@@ -444,6 +477,7 @@ export default {
 
     /*------保存事件-----*/
     onSave() {
+      this.rules.project_execute_dept_name[0].required = true;
       this.showMessage = true;
       this.$refs.formRef.validate(valid => {
         if (valid) {
@@ -479,7 +513,7 @@ export default {
           }
 
           let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_save";
+          obj.serviceRoot = "prodsm/WorkLetter/work_letter_save";
           obj.params = {
             data: {
               row: [
@@ -525,7 +559,7 @@ export default {
               this.formData.imple_depart = "";
               this.formData.letter_contents = [];
               this.showMessage = false;
-
+              this.rules.project_execute_dept_name[0].required = false;
               console.log("保存成功：----", res);
             })
             .catch(err => {

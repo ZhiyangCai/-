@@ -88,10 +88,23 @@ Print.prototype = {
     iframe.setAttribute('style', 'position:absolute;width:0;height:0;top:-10px;left:-10px;');
     w = f.contentWindow || f.contentDocument;
     doc = f.contentDocument || f.contentWindow.document;
+
     doc.open();
     doc.write(content);
     doc.close();
     var _this = this
+    //alert(window.addEventListener);
+    
+    // if(iframe.attachEvent) {
+    //       iframe.attachEvent("onload", function(){
+    //          alert("has loaded");
+    //     });
+    // } else {
+    //         alert("no load");
+    //       iframe.onload = function(){
+    //          alert("注册load");
+    //       };
+    //   }
     iframe.onload = function () {
       _this.toPrint(w);
       setTimeout(function () {
@@ -99,6 +112,7 @@ Print.prototype = {
       }, 100)
     }
   },
+
 
   toPrint: function (frameWindow) {
     try {

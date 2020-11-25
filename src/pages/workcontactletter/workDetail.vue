@@ -29,7 +29,14 @@
             </el-col>
           </el-row>
           <div>
-            <el-divider>任务发送时间 {{ formDataModify.send_time }}</el-divider>
+            <el-divider
+              >任务发送时间
+              {{
+                formDataModify.send_time
+                  ? moment(formDataModify.send_time).format("YYYY-MM-DD")
+                  : ""
+              }}</el-divider
+            >
             <!-- 限定完成时间 -->
             <el-row>
               <el-col :span="12">
@@ -245,7 +252,14 @@
             v-for="item in workDataList"
             :key="'work_item_' + item.send_time"
           >
-            <el-divider>任务发送时间 {{ item.send_time }}</el-divider>
+            <el-divider
+              >任务发送时间
+              {{
+                item.send_time
+                  ? moment(item.send_time).format("YYYY-MM-DD")
+                  : ""
+              }}</el-divider
+            >
             <!-- 限定完成时间 -->
             <el-row>
               <el-col :span="12">
@@ -903,7 +917,7 @@ export default {
           }
 
           let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_submit";
+          obj.serviceRoot = "prodsm/WorkLetter/work_letter_submit";
           obj.params = {
             data: {
               row: [
@@ -938,6 +952,44 @@ export default {
           this.requestDrmService(obj, this)
             .then(res => {
               this.loading = false;
+              let result_data = JSON.parse(res.resultData);
+              if (result_data.result_list.length > 0) {
+                //循环提交待办接口
+                for (let i = 0; i < result_data.result_list.length; i++) {
+                  let objItem = {};
+                  objItem.serviceRoot =
+                    "wpdbDS/wxapprovemanger/wxapprovemanger";
+                  objItem.params = {
+                    data: {
+                      row: [result_data.result_list[i]]
+                    },
+                    head: {
+                      msg_code: "wxapprovemanger",
+                      msg_id: "wxapprovemanger",
+                      request_time: "",
+                      source_sys: "wpdbDS",
+                      service_class: "wxapprovemanger",
+                      target_sys: "MOBILE",
+                      user_id: "admin",
+                      user_key: "admin"
+                    }
+                  };
+                  this.requestDrmService(objItem, this)
+                    .then(r => {
+                      if (r.resultCode === "0") {
+                        console.log("==submitSuccess==");
+                      }
+                    })
+                    .catch(e => {
+                      this.loading = false;
+                      this.$message({
+                        type: "error",
+                        message: "提交失败"
+                      });
+                      console.log("==submitError==", e);
+                    });
+                }
+              }
               this.$message({
                 type: "success",
                 message: "提交成功"
@@ -1014,7 +1066,7 @@ export default {
           }
 
           let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_save";
+          obj.serviceRoot = "prodsm/WorkLetter/work_letter_save";
           obj.params = {
             data: {
               row: [
@@ -1063,6 +1115,7 @@ export default {
               this.formDataModify.letter_contents = [];
               this.formDataModify.imple_uses = [];
               this.showMessage = false;
+
               console.log("修改成功：----", res);
             })
             .catch(err => {
@@ -1116,7 +1169,7 @@ export default {
           }
 
           let obj = {};
-          obj.serviceRoot = "WorkLetter/work_letter_resend";
+          obj.serviceRoot = "prodsm/WorkLetter/work_letter_resend";
           obj.params = {
             data: {
               row: [
@@ -1157,7 +1210,7 @@ export default {
                 type: "success",
                 message: "重新发送成功"
               });
-              /*---------保存成功后重置----------*/
+              /*---------重新发起成功后重置----------*/
               this.$parent.$parent.$parent.timer = new Date().getTime();
 
               this.formData.letter_name = "";
@@ -1192,7 +1245,7 @@ export default {
       }).then(() => {
         this.loading = true;
         let obj = {};
-        obj.serviceRoot = "WorkLetter/work_letter_archive";
+        obj.serviceRoot = "prodsm/WorkLetter/work_letter_archive";
         obj.params = {
           data: {
             row: [
@@ -1277,7 +1330,6 @@ export default {
           row: [
             {
               letter_id: this.letter_id,
-
               loggedUser: {
                 path: "1/S00000000000003/S00000000012424",
                 weight: "1",
@@ -1299,7 +1351,7 @@ export default {
       };
       // obj.serviceRoot = "project/designReportByIdQuery";
       // obj.baseURL = "/itmsdrm";
-      obj.serviceRoot = "WorkLetter/work_letter_detail";
+      obj.serviceRoot = "prodsm/WorkLetter/work_letter_detail";
       this.loading = true;
       this.requestDrmService(obj, this)
         .then(res => {
@@ -1307,12 +1359,23 @@ export default {
           if (res.resultCode === "0") {
             //let result_data = JSON.parse(res.resultData).map;
             let result_data = JSON.parse(res.resultData);
-            this.workDataList = result_data.rows;
+
+            this.workDataList = result_data.rows.map(item => {
+              item.iprincipal_list.map(j => {
+                j.finish_time = j.finish_time
+                  ? this.moment(j.finish_time).format("YYYY-MM-DD")
+                  : "";
+                return j;
+              });
+              return item;
+            });
+
             console.log("----result_data----:" + JSON.stringify(result_data));
             //工作联系函实施表id
             this.letter_implement_id = result_data.rows[0].letter_implement_id;
             this.letter_name = result_data.letter_name;
             this.letter_status = result_data.letter_status;
+            //如果是草稿显示可编辑的数据
             if (this.letter_status === "0") {
               this.isReadonly = false;
               this.formDataModify.iprincipal_list =

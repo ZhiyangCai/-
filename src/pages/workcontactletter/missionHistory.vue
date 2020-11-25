@@ -2,18 +2,17 @@
   <div id="project_history" style="background:white">
     <div>
       <div>
-        <div
-          style="border: 1px solid #E4E7ED;border-width: 0 1px 1px 1px;margin: 40px 25px 10px 25px;"
-        >
-          <el-divider content-position="left">任务记录查询：</el-divider>
-
+        <!-- style="border: 1px solid #E4E7ED;border-width: 0 1px 1px 1px;margin: 40px 25px 10px 25px;" -->
+        <div>
+          <!-- <el-divider content-position="left">任务记录查询：</el-divider> -->
+          <!-- style="padding: 0 10px 10px 10px;" -->
           <el-form
             :inline="true"
             :model="searchFormInline"
             :label-position="'left'"
-            class="demo-form-inline"
-            size="mini"
-            style="padding: 0 10px 10px 10px;"
+            class="demo-form-inline_"
+            size="medium"
+            style="padding:25px 25px 0px;"
           >
             <el-form-item label="任务标题：">
               <el-input
@@ -37,15 +36,13 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-
             <!-- <el-form-item label="选择周期：">
               <el-date-picker style="width: 250px;" v-model="searchTime" type="daterange" range-separator="至"
                 start-placeholder="开始日期" end-placeholder="结束日期">
               </el-date-picker>
             </el-form-item> -->
-
             <el-form-item>
-              <el-button type="primary" @click="onSubmitSearch()"
+              <el-button size="medium" type="primary" @click="onSubmitSearch()"
                 >查询</el-button
               >
               <!-- <el-button @click="onSubmit('1')">重置</el-button> -->
@@ -53,7 +50,7 @@
           </el-form>
         </div>
 
-        <div style="padding: 10px 25px;">
+        <div style="padding: 0px 25px 10px;">
           <el-table
             v-loading="loading"
             :data="projectList"
@@ -76,14 +73,15 @@
               >
               </el-table-column>
             </template>
+            <!-- width="400" -->
             <el-table-column
+              width="320"
               label="操作"
-              width="300"
               header-align="center"
               align="center"
             >
               <template slot-scope="scope">
-                <div style="white-space: wrap;">
+                <div style="white-space:nowrap;">
                   <!-- 测试 -->
                   <el-button
                     style="margin:5px;"
@@ -165,7 +163,7 @@
       </div>
     </div>
 
-    <el-dialog
+    <!-- <el-dialog
       v-if="dialogVisible"
       :visible.sync="dialogVisible"
       width="80%"
@@ -198,7 +196,7 @@
           >导出</el-button
         >
       </div>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -207,7 +205,7 @@ import project_print from "../project_print/index";
 
 export default {
   name: "missionHistory",
-  props: ["stateList", "processCompList", "contractStepList"],
+  //props: ["stateList", "processCompList", "contractStepList"],
   components: {
     project_print
   },
@@ -241,23 +239,23 @@ export default {
       userCode: sessionStorage.getItem("userCode"), //用户账号
       userName: this.GLOBAL.userName, //用户名
 
-      /** 导出弹框页面 */
-      dialogVisible: false, //弹框状态
-      dialogTitle: "", //弹框标题
-      num: 1,
+      // /** 导出弹框页面 */
+      // dialogVisible: false, //弹框状态
+      // dialogTitle: "", //弹框标题
+      // num: 1,
 
-      /** 导出页面参数 --- 项目信息和合同信息*/
-      project_id: "",
-      project_code: "",
-      project_name: "",
-      project_title: "",
+      // /** 导出页面参数 --- 项目信息和合同信息*/
+      // project_id: "",
+      // project_code: "",
+      // project_name: "",
+      // project_title: "",
 
-      /** 归档弹框页面*/
-      dialogVisible1: false,
-      dialogTitle1: "归档到ITME系统",
-      fileObj: {
-        stage: ""
-      },
+      // /** 归档弹框页面*/
+      // dialogVisible1: false,
+      // dialogTitle1: "归档到ITME系统",
+      // fileObj: {
+      //   stage: ""
+      // },
 
       /** table */
       loading: false, //table 加载状态
@@ -291,6 +289,7 @@ export default {
   },
   mounted() {
     //加载表头和表格数据
+    //document.querySelector(".el-tabs__nav-scroll").style.display = "none";
 
     this.getTableHeader();
     this.getProjectList();
@@ -375,8 +374,8 @@ export default {
           user_key: "admin"
         }
       };
-
-      obj.serviceRoot = "WorkLetter/work_letter_list";
+      console.log("====canshu====" + JSON.stringify(obj.params));
+      obj.serviceRoot = "prodsm/WorkLetter/work_letter_list";
       //obj.serviceRoot = "project/confirmQuery";
       //obj.baseURL = "/itmsdrm";
       this.projectList = [];
@@ -391,8 +390,9 @@ export default {
             this.projectList = this.projectList.concat(result_data.rows || []);
             this.projectList.map(el => {
               el.limited_time = el.limited_time
-                ? this.moment(el.limited_time).format("YYYY-MM-DD HH:mm:ss")
-                : "";
+                ? this.moment(el.limited_time).format("YYYY-MM-DD")
+                : // ? this.moment(el.limited_time).format("YYYY-MM-DD HH:mm:ss")
+                  "";
               switch (el.letter_status) {
                 case "0":
                   el.letter_status = "草稿";
@@ -449,15 +449,18 @@ export default {
         return;
       }
       /*-----------------打印---------------*/
-
+      let content = "workDetail";
+      //let content = this.$parent.$parent.$parent.linkToPage(this.billType);
+      let tabName = this.$parent.$parent.$parent.randomString(6);
+      let title = _type; //"查看及重新发起";
+      let type = "edit";
       if (_type === "打印") {
-        //打印
         let href_url;
         const { href } = this.$router.resolve({
-          // path: "/printPdf",
           path: "/printDetail",
           query: {
-            letter_id: rowData.letter_id
+            letter_id: rowData.letter_id,
+            userCode: this.GLOBAL.userCode
           }
         });
         href_url = href;
@@ -465,23 +468,16 @@ export default {
         return;
       }
 
-      let content = "workDetail";
-      //let content = this.$parent.$parent.$parent.linkToPage(this.billType);
-      let tabName = this.$parent.$parent.$parent.randomString(6);
-      let title = "查看及重新发起";
-      //let type = "read";
-      let type = "edit";
-      if (_type === "查看" || _type === "重新发起" || _type === "7") {
-        if (_type === "7") {
-          title = "归档页面查看";
-          content = "fileDetail";
-          //return;
-        }
-
+      if (_type === "查看" || _type === "重新发起") {
+        // if (_type === "查看" || _type === "重新发起" || _type === "打印") {
+        // if (_type === "打印") {
+        //   content = "printDetail";
+        // }
+        title = _type + "任务(" + rowData.letter_name + ")";
         let obj_params = {
           name: tabName,
           content: content,
-          closable: true,
+          // closable: true,
           project_id: rowData.ID,
           bill_code: "rowData.TYPE", //rowData.TYPE,
           type: type,
@@ -490,24 +486,28 @@ export default {
         };
         obj_params.title = title; //+ rowData.PROJECT_VIEW_TYPE_NAME;
 
+        if (this.$parent.$parent.$parent.tabsList.length > 2) {
+          let index = this.$parent.$parent.$parent.tabsList.length - 1;
+          this.$parent.$parent.$parent.tabsList.splice(index, 1);
+        }
         this.$parent.$parent.$parent.tabsList.push(obj_params);
         this.$parent.$parent.$parent.activeName = tabName;
       }
     },
     /** 打印页面 导出按钮 执行方法 */
-    pdfOut() {
-      let dom = document
-        .querySelector("#printContent")
-        .getElementsByClassName("project_title1");
-      let domTitle = dom[0].innerHTML;
-      let appendTitle =
-        "（" +
-        this.project_name +
-        (this.project_title.length > 0 ? "-" + this.project_title : "") +
-        "）";
-      this.getPdf("printContent", domTitle + appendTitle);
-      this.dialogVisible = false;
-    },
+    // pdfOut() {
+    //   let dom = document
+    //     .querySelector("#printContent")
+    //     .getElementsByClassName("project_title1");
+    //   let domTitle = dom[0].innerHTML;
+    //   let appendTitle =
+    //     "（" +
+    //     this.project_name +
+    //     (this.project_title.length > 0 ? "-" + this.project_title : "") +
+    //     "）";
+    //   this.getPdf("printContent", domTitle + appendTitle);
+    //   this.dialogVisible = false;
+    // },
     /** table 操作列中 删除按钮 执行方法 */
     //s删除任务
     deleteWork(rowData) {
@@ -517,7 +517,7 @@ export default {
         type: "warning"
       }).then(() => {
         let obj = {};
-        obj.serviceRoot = "WorkLetter/work_letter_delete";
+        obj.serviceRoot = "prodsm/WorkLetter/work_letter_delete";
         //obj.baseURL = "/itmsdrm";
         obj.params = {
           data: {
@@ -578,7 +578,7 @@ export default {
         type: "warning"
       }).then(() => {
         let obj = {};
-        obj.serviceRoot = "WorkLetter/work_letter_archive";
+        obj.serviceRoot = "prodsm/WorkLetter/work_letter_archive";
         //obj.baseURL = "/itmsdrm";
         obj.params = {
           data: {
@@ -634,7 +634,14 @@ export default {
   }
 };
 </script>
-
+<style scoped media="print">
+@media print {
+  /* 打印的时候隐藏头部 */
+  .el-tabs__nav-scroll {
+    display: none;
+  }
+}
+</style>
 <style scoped>
 #project_history {
   height: 100%;

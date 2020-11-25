@@ -20,7 +20,7 @@ module.exports = {
         },
         changeOrigin: true, //改变源
         pathRewrite: {
-          '^/api': '' //路径重写
+          '^/api': '' //路径重写 ，
         }
       },
       '/bpi': {//测试环境代理
@@ -32,7 +32,7 @@ module.exports = {
         },
         changeOrigin: true, //改变源
         pathRewrite: {
-          '^/bpi': '' //路径重写
+          '^/bpi': '' //路径重写 
         }
       }
       ,

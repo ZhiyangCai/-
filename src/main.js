@@ -54,6 +54,9 @@ Vue.use(htmlToPdf);
 import windowPrint from '@/components/utils/windowPrint'
 
 Vue.use(windowPrint);
+ import Print from 'vue-print-nb'
+Vue.use(Print);
+
 
 /** TODO 公共css */
 import '@/assets/css/common.css'
@@ -140,6 +143,27 @@ new Vue({
         sessionStorage.setItem('userName', this.$route.query.userName);
         this.GLOBAL.userName = sessionStorage.getItem('userName');
       }
+    }
+    else {
+       sessionStorage.setItem('userCode', '99100774');
+       this.GLOBAL.userCode = sessionStorage.getItem('userCode');
+       sessionStorage.setItem('userName', this.$route.query.userName);
+       this.GLOBAL.userName = sessionStorage.getItem('马腾');
+
+      //  sessionStorage.setItem('userCode', '99102117');
+      //  this.GLOBAL.userCode = sessionStorage.getItem('userCode');
+      //  sessionStorage.setItem('userName', this.$route.query.userName);
+      //  this.GLOBAL.userName = sessionStorage.getItem('蔡志洋');
+
+
+       //  sessionStorage.setItem('userCode', '99102117');
+      //  this.GLOBAL.userCode = sessionStorage.getItem('userCode');
+      //  sessionStorage.setItem('userName', this.$route.query.userName);
+      //  this.GLOBAL.userName = sessionStorage.getItem('杜博');
+
+
+        
+     
     }
   },
   methods: {}

@@ -26,12 +26,14 @@ export default {
         if (this.isNormal === 'true') {//正式环境
           baseUrl = '/api'
           //baseUrl = '/mock/52/kjy-work-letter'
-          //baseUrl = '/wxdsm/services'
+          //baseUrl = '/wxdsm/services'当时没想完全靠它写代码就是救急的时候写一下，其他时候自己用
            //baseUrl = 'https://weixintest.hbtobacco.cn'
           // baseUrl = 'http://10.156.5.12:9080'
           
         } else if (this.isNormal === 'false') {//测试环境
-          baseUrl = '/bpi'
+          //baseUrl = '/bpi'
+           baseUrl = 'https://weixintest.hbtobacco.cn'
+
         }
       } else {//生产环境 
         baseUrl = ''

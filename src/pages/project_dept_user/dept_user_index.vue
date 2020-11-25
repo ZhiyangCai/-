@@ -318,7 +318,7 @@ export default {
       this.loading = true;
       let obj = {};
       //obj.serviceRoot = "project/findUserByText";
-      obj.serviceRoot = "WorkLetter/WorkLetterFindUserByText";
+      obj.serviceRoot = "prodsm/WorkLetter/WorkLetterFindUserByText";
       obj.params = {
         // id: this.dept_id,
         // text: this.searchInput.trim()
@@ -360,7 +360,7 @@ export default {
       this.loading = true;
       let obj = {};
       //obj.serviceRoot = "project/data_tree";
-      obj.serviceRoot = "WorkLetter/WorkLetterDeptTree";
+      obj.serviceRoot = "prodsm/WorkLetter/WorkLetterDeptTree";
       obj.params = {
         // id: this.id,
         // text: this.searchInput

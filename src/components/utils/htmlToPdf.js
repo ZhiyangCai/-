@@ -10,11 +10,13 @@ export default {
         allowTaint: true,
         taintTest: false,
         useCORS: true,
+        //scrollY:0,
         //width:960,
         //height:5072,
         dpi: window.devicePixelRatio * 4, //将分辨率提高到特定的DPI 提高四倍
         scale: 4 //按比例增加分辨率
       }).then(function (canvas) {
+        
           let contentWidth = canvas.width;
           let contentHeight = canvas.height;
           let pageHeight = contentWidth / 592.28 * 841.89;
