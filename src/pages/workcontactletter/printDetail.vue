@@ -273,7 +273,11 @@
 
     <div class="print_btn print_hide">
       <!-- size="mini" -->
-      <el-button @click="handlePrint" type="primary" size="medium"
+      <el-button
+        id="printButton"
+        @click="handlePrint"
+        type="primary"
+        size="medium"
         >打印</el-button
       >
     </div>
@@ -296,6 +300,7 @@
   padding: 5px;
   word-wrap: break-word;
   word-break: normal;
+  border: 1px solid #e4e7ed;
 }
 #project_print {
   height: 100%;
@@ -321,8 +326,11 @@
 
 #project_print .print_btn {
   border-top: 2px solid #e4e7ed;
-  text-align: center;
+  /* text-align: center; */
   /* padding-top: 10px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding-top: 6px;
 }
 
@@ -380,6 +388,13 @@ export default {
   },
   watch: {},
   mounted() {
+    // document.getElementById("printButton").addEventListener(
+    //   "load",
+    //   function() {
+    //     alert("printButton load");
+    //   },
+    //   false
+    // );
     /*路由入参*/
     this.letter_id = this.$route.query.letter_id;
     // this.userCode = this.$route.query.userCode;

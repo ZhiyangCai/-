@@ -80,37 +80,46 @@ Print.prototype = {
     return this.dom.outerHTML;
   },
 
-  writeIframe: function (content) {
-    var w, doc, iframe = document.createElement('iframe'),
-      f = document.body.appendChild(iframe);
-    iframe.id = "myIframe";
-    //iframe.style = "position:absolute;width:0;height:0;top:-10px;left:-10px;";
-    iframe.setAttribute('style', 'position:absolute;width:0;height:0;top:-10px;left:-10px;');
-    w = f.contentWindow || f.contentDocument;
-    doc = f.contentDocument || f.contentWindow.document;
-
-    doc.open();
-    doc.write(content);
-    doc.close();
-    var _this = this
-    //alert(window.addEventListener);
-    
-    // if(iframe.attachEvent) {
-    //       iframe.attachEvent("onload", function(){
-    //          alert("has loaded");
-    //     });
-    // } else {
-    //         alert("no load");
-    //       iframe.onload = function(){
-    //          alert("注册load");
-    //       };
-    //   }
-    iframe.onload = function () {
+    writeIframe: function (content) {
+    var w, doc, iframe = document.createElement('iframe');
+   
+    // iframe.onload = function () {
+    // /*--------------------打印 begin--------------------*/
+    //     //iframe.id = "myIframe";
+    //     //iframe.style = "position:absolute;width:0;height:0;top:-10px;left:-10px;";
+    //    // iframe.setAttribute('style', 'position:absolute;width:0;height:0;top:-10px;left:-10px;');
+    //     // w = f.contentWindow || f.contentDocument;
+    //     // doc = f.contentDocument || f.contentWindow.document;
+    //     // doc.open();
+    //     // doc.write(content);
+    //     // doc.close();
+    //     // var _this = this
+    // /*--------------------打印 end--------------------*/
+    //  _this.toPrint(w);
+    //   setTimeout(function () {
+    //       document.body.removeChild(iframe)
+    //     }, 100)
+    // }
+      var f = document.body.appendChild(iframe);
+        iframe.id = "myIframe";
+        //iframe.style = "position:absolute;width:0;height:0;top:-10px;left:-10px;";
+        iframe.setAttribute('style', 'position:absolute;width:0;height:0;top:-10px;left:-10px;');
+        w = f.contentWindow || f.contentDocument;
+        doc = f.contentDocument || f.contentWindow.document;
+        doc.open();
+        doc.write(content);
+        doc.close();
+        var _this = this
       _this.toPrint(w);
       setTimeout(function () {
         document.body.removeChild(iframe)
       }, 100)
-    }
+    // iframe.onload = function () {
+    //   _this.toPrint(w);
+    //   setTimeout(function () {
+    //     document.body.removeChild(iframe)
+    //   }, 100)
+    // }
   },
 
 

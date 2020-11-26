@@ -38,8 +38,8 @@ export default {
       } else {//生产环境 
         baseUrl = ''
       }
-console.log("url:-------"+baseUrl + that.GLOBAL.serviceDsmPort + '/' + obj.serviceRoot);
-return new Promise((resolve, reject) => {
+    console.log("url:-------"+baseUrl + that.GLOBAL.serviceDsmPort + '/' + obj.serviceRoot);
+    return new Promise((resolve, reject) => {
         that.$axios({
           url: baseUrl + that.GLOBAL.serviceDsmPort + '/' + obj.serviceRoot,
           method: obj.methods,

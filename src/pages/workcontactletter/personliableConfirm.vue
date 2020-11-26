@@ -1,6 +1,7 @@
 <!-- 设计报告确认单 edit by xyy -->
 <template>
-  <div id="designer_report_confirm">
+<!-- style="background:#e4e7ed" -->
+  <div id="designer_report_confirm" style="background:#e4e7ed">
     <div class="project_form">
       <div class="project_title">{{ projectTitle }}工作联系函</div>
       <div
@@ -65,15 +66,6 @@
                 </div>
               </el-form-item>
 
-              <!-- <el-form-item style="margin-left:80px" label="责任人" prop="project_code">
-                <el-input v-if="isReadonly" v-model="formData.project_code"></el-input>
-                <el-select v-else v-model="formData.project_id1" filterable placeholder="请选择项目编号" @change="handleSelectProject"
-                  style="width: 100%;">
-                  <el-option v-for="(item,i) in projectOptions" :key="item.project_id+i" :label="item.project_code"
-                    :value="item.project_id">
-                  </el-option>
-                </el-select>
-              </el-form-item> -->
             </el-col>
           </el-row>
 
@@ -216,7 +208,7 @@
                       </div>
 
                       <div class="file_list">
-                      <el-row
+                         <el-row
                           class="file_list_row"
                           v-for="(file, i) in formData.file_list"
                           :key="'file_' + i"
@@ -237,7 +229,7 @@
                               <span class="el-icon-close"></span>
                             </el-button>
                           </el-col>
-                        </el-row>
+                         </el-row>
                         <!-- <el-row
                           class="file_list_row"
                           v-for="(file, i) in formData.file_list_attach2"
@@ -264,15 +256,18 @@
                           </el-col>
                         </el-row> -->
                       </div>
+                  
                     </el-upload>
                   </el-form-item>
                 </el-col>
               </el-row>
+          
+          
             </div>
             <!-- 底部按钮 -->
-            <el-row>
+            <el-row style="height:40px">
               <el-col :span="24">
-                <div style="text-align:center;margin-top:30px">
+                <div style="text-align:center;height:40px">
                   <el-button
                     type="primary"
                     v-loading.fullscreen.lock="this.loading"
@@ -281,6 +276,7 @@
                 </div>
               </el-col>
             </el-row>
+            
 
             <!-- 待实施工作内容 end-->
           </div>
@@ -613,6 +609,7 @@ export default {
         message: "上传成功！"
       });
     },
+    /**上传失败的提示**/
       handleUploadError(err, file, fileList) {
       this.fileUploading.close();
       this.$message({
@@ -621,7 +618,7 @@ export default {
       });
     },
    
-    /*------保存，提交事件-----*/
+    /**（保存/提交）事件**/
     onSave(_type) {
       this.showMessage=true;
       this.$refs.formRef.validate(valid => {
@@ -666,9 +663,11 @@ export default {
                 if (res.resultCode === "0") {
                  if(_type==="save")
                  {
-                  this.saveDetail();
+                   /*--保存方法--*/
+                   this.saveDetail();
                  }
                  else{
+                   /*--提交方法--*/
                    this.submitDetail();
                  }
                   console.log("上传文件成功：----", res);
@@ -692,7 +691,7 @@ export default {
         }
       });
     },
-    //提交明细操作 
+    /*提交明细操作*/ 
     submitDetail(){
         var date = this.moment(this.formData.finish_time).format(
             "YYYY-MM-DD HH:mm:ss"
@@ -790,7 +789,7 @@ export default {
             });
 
     },
-    //保存明细操作
+    /*保存明细操作*/ 
     saveDetail(){
           var date = this.moment(this.formData.finish_time).format(
             "YYYY-MM-DD HH:mm:ss"
@@ -850,6 +849,8 @@ export default {
               console.log("请求保存error后返回：------",err);
             });
     },
+
+
     //增加一行表格
     handleAddDetails() {
       if (this.formData.letter_contents == undefined) {
@@ -887,67 +888,6 @@ export default {
       this.multipleSelection = val;
     },
 
-    /** 项目基本信息-获取项目列表 */
-
-    /** 项目基本信息 - 项目 change */
-    handleSelectProject(val) {
-      let list = {};
-      this.projectOptions.map(el => {
-        if (val === el.project_id) {
-          list = el;
-          this.formData.project_name = el.project_name;
-          this.formData.project_code = el.project_code;
-          this.formData.project_id1 = val;
-          this.formData.project_id = val;
-        }
-      });
-
-      this.getContractList(val);
-      if (
-        this.formData.project_code === null ||
-        this.formData.project_code === ""
-      ) {
-        this.formData.project_id1 = "";
-        this.$message({
-          type: "warning",
-          message: "请联系信息经办人在ITME系统中维护项目编号"
-        });
-      }
-    },
-    /** 项目基本信息 - 合同 change */
-    handleSelectContract(val) {
-      this.contractSelect = false;
-      this.contract_id = val;
-    },
-    /** 项目基本信息-获取合同列表 */
-    getContractList(project_id, _type, contractId) {
-      let obj = {};
-      obj.params = {
-        project_id: project_id
-      };
-      obj.serviceRoot = "itms/contractByProjectIdQuery";
-      obj.baseURL = "/itmsdrm";
-      this.requestDrmService(obj, this)
-        .then(res => {
-          if (res.resultCode === "0") {
-            let result_data = JSON.parse(res.resultData);
-            this.contractList = result_data.rows || [];
-            if (_type) {
-              this.contractSelect = true;
-              this.contract_id = contractId;
-              return;
-            }
-
-            this.contractSelect = false;
-            if (this.contractList.length !== 0) {
-              this.contract_id = this.contractList[0].id;
-            }
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
     /** 根据表单id 获取表单信息 */
     getFormData() {
       let obj = {};

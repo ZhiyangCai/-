@@ -882,7 +882,7 @@ export default {
             for (var i = 0; i < contents.length; i++) {
               if (contents[i].letter_content.trim() === "") {
                 this.$message({
-                  message: "工作项内容并不能为空！",
+                  message: "工作项内容不能为空！",
                   type: "warning"
                 });
                 return;
@@ -1005,6 +1005,7 @@ export default {
               this.formDataModify.letter_contents = [];
               this.formDataModify.imple_uses = [];
               this.showMessage = false;
+              this.$parent.$parent.$parent.timer = new Date().getTime();
 
               console.log("提交成功：----", res);
             })
@@ -1032,7 +1033,7 @@ export default {
             for (var i = 0; i < contents.length; i++) {
               if (contents[i].letter_content.trim() === "") {
                 this.$message({
-                  message: "工作项内容并不能为空！",
+                  message: "工作项内容不能为空！",
                   type: "warning"
                 });
                 return;
@@ -1115,6 +1116,7 @@ export default {
               this.formDataModify.letter_contents = [];
               this.formDataModify.imple_uses = [];
               this.showMessage = false;
+              this.$parent.$parent.$parent.timer = new Date().getTime();
 
               console.log("修改成功：----", res);
             })
@@ -1142,7 +1144,7 @@ export default {
             for (var i = 0; i < contents.length; i++) {
               if (contents[i].name.trim() === "") {
                 this.$message({
-                  message: "工作项内容并不能为空！",
+                  message: "工作项内容不能为空！",
                   type: "warning"
                 });
                 return;
@@ -1206,6 +1208,44 @@ export default {
           this.requestDrmService(obj, this)
             .then(res => {
               this.loading = false;
+              let result_data = JSON.parse(res.resultData);
+              if (result_data.result_list.length > 0) {
+                //循环提交待办接口
+                for (let i = 0; i < result_data.result_list.length; i++) {
+                  let objItem = {};
+                  objItem.serviceRoot =
+                    "wpdbDS/wxapprovemanger/wxapprovemanger";
+                  objItem.params = {
+                    data: {
+                      row: [result_data.result_list[i]]
+                    },
+                    head: {
+                      msg_code: "wxapprovemanger",
+                      msg_id: "wxapprovemanger",
+                      request_time: "",
+                      source_sys: "wpdbDS",
+                      service_class: "wxapprovemanger",
+                      target_sys: "MOBILE",
+                      user_id: "admin",
+                      user_key: "admin"
+                    }
+                  };
+                  this.requestDrmService(objItem, this)
+                    .then(r => {
+                      if (r.resultCode === "0") {
+                        console.log("==submitSuccess==");
+                      }
+                    })
+                    .catch(e => {
+                      this.loading = false;
+                      this.$message({
+                        type: "error",
+                        message: "提交失败"
+                      });
+                      console.log("==submitError==", e);
+                    });
+                }
+              }
               this.$message({
                 type: "success",
                 message: "重新发送成功"

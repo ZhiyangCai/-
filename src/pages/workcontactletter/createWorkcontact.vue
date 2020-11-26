@@ -297,7 +297,7 @@ export default {
         project_execute_dept_name: [
           {
             required: true,
-            trigger: "blur",
+            //trigger: "blur",
             message: "请选择责任人"
           }
         ]
@@ -349,7 +349,7 @@ export default {
             for (var i = 0; i < contents.length; i++) {
               if (contents[i].name.trim() === "") {
                 this.$message({
-                  message: "工作项内容并不能为空！",
+                  message: "工作项内容不能为空！",
                   type: "warning"
                 });
                 return;
@@ -461,6 +461,7 @@ export default {
               this.formData.letter_contents = [];
               this.showMessage = false;
               this.rules.project_execute_dept_name[0].required = false;
+              this.$parent.$parent.$parent.timer = new Date().getTime();
               console.log("提交成功：----", res);
             })
             .catch(err => {
@@ -486,7 +487,7 @@ export default {
             for (var i = 0; i < contents.length; i++) {
               if (contents[i].name.trim() === "") {
                 this.$message({
-                  message: "工作项内容并不能为空！",
+                  message: "工作项内容不能为空！",
                   type: "warning"
                 });
                 return;
@@ -560,6 +561,7 @@ export default {
               this.formData.letter_contents = [];
               this.showMessage = false;
               this.rules.project_execute_dept_name[0].required = false;
+              this.$parent.$parent.$parent.timer = new Date().getTime();
               console.log("保存成功：----", res);
             })
             .catch(err => {

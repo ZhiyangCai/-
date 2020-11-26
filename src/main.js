@@ -133,6 +133,7 @@ new Vue({
     return {}
   },
   mounted() {
+    
     if (this.GLOBAL.isNormal === 'true') {
       if (this.$route.query.userCode) {
         sessionStorage.setItem('userCode', this.$route.query.userCode);
@@ -143,8 +144,10 @@ new Vue({
         sessionStorage.setItem('userName', this.$route.query.userName);
         this.GLOBAL.userName = sessionStorage.getItem('userName');
       }
+      
     }
     else {
+
        sessionStorage.setItem('userCode', '99100774');
        this.GLOBAL.userCode = sessionStorage.getItem('userCode');
        sessionStorage.setItem('userName', this.$route.query.userName);
@@ -155,14 +158,10 @@ new Vue({
       //  sessionStorage.setItem('userName', this.$route.query.userName);
       //  this.GLOBAL.userName = sessionStorage.getItem('蔡志洋');
 
-
        //  sessionStorage.setItem('userCode', '99102117');
       //  this.GLOBAL.userCode = sessionStorage.getItem('userCode');
       //  sessionStorage.setItem('userName', this.$route.query.userName);
       //  this.GLOBAL.userName = sessionStorage.getItem('杜博');
-
-
-        
      
     }
   },
