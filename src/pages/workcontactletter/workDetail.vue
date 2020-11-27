@@ -606,9 +606,9 @@
           <el-row>
             <el-col :span="24">
               <div style="text-align:center;margin-top:30px">
-                <!-- （1）草稿0----显示提交保存按钮，
-              （2）已回复2----显示重新发送和归档按钮，
-              （3）归档3/处理中1----所有按钮不显示 -->
+                <!-- （1）草稿0----显示（提交，保存）按钮，
+              （2）已回复2----显示（重新发送，归档）按钮，
+              （3）归档3/处理中1----不显示按钮 -->
                 <el-button
                   v-if="this.letter_status === '2'"
                   type="primary"
@@ -1201,9 +1201,7 @@ export default {
               user_key: "admin"
             }
           };
-          console.log(
-            "----重新发送传递的参数----:" + JSON.stringify(obj.params)
-          );
+          console.log("----重新发送传递的参数----:", obj.params);
           this.loading = true;
           this.requestDrmService(obj, this)
             .then(res => {

@@ -198,8 +198,9 @@
                       :on-error="handleAvatarError" 
                     >
                       <div slot="trigger">
+                       <!-- size="small" -->
                         <el-button
-                          size="small"
+                          size="medium"
                           :disabled="!isReadonly"
                           type="primary"
                           style="width: 200px;"
@@ -323,7 +324,7 @@ import QRCode from "qrcodejs2";
 export default {
   //name: "designer_report_confirm",
   name: "personliableConfirm",
-  props: ["projectId", "projectType", "billCode"],
+  //props: ["projectId", "projectType", "billCode"],
   components: {
     dept_user_index
   },
@@ -368,9 +369,7 @@ export default {
       state: "1", //表单状态
       projectTitle: "", //表单抬头
       projectCode: "", //表单编码
-      isReadonly: true, //projectType为read时为 true，（add,read）为 false
-      // isReadonly: false, //projectType为read时为 true，（add,read）为 false
-
+      isReadonly: true, 
       //uploadUrl: "transfer/api/dsm/file/upload", //上传url
       //uploadUrl: "https://weixin.hbtobacco.cn/financeTransport/wechat/file/upload", //上传url
       uploadUrl: "/financeTransport/wechat/file/upload", //上传url
@@ -579,16 +578,10 @@ export default {
     // this.projectCode = this.$parent.$parent.$parent.getProjectCode(
     //   this.billCode
     // ).label;
-    // if (this.projectType === "add" || this.projectType === "edit") {
-    //   this.isReadonly = false;
-    // } else {
-    //   this.isReadonly = true;
-    // }
+    
 
     this.getFormData();
-    // if (this.projectType !== "add") {
-    //   this.getFormData();
-    // }
+   
   },
   methods: {
 
@@ -620,6 +613,7 @@ export default {
    
     /**（保存/提交）事件**/
     onSave(_type) {
+
       this.showMessage=true;
       this.$refs.formRef.validate(valid => {
         if (valid) {
@@ -1073,13 +1067,15 @@ export default {
           "Content-Type": "multipart/form-data"
         }
       }).then(res => {
-        console.log("====success====",res.data.resultData);
+        console.log("====上传的文件信息====",res.data.resultData);
         this.handleUploadSuccess();
         var fileobj={
             emc_url:res.data.resultData.attachUrl,
             file_name: res.data.resultData.attachName
         }
         this.formData.file_list.push(fileobj);
+      this.showMessage=false;
+
         //alert(JSON.stringify(JSON.parse(res.data.resultData)));
        }).catch((error)=>{
         this.handleUploadError();
@@ -1253,123 +1249,9 @@ export default {
       //选择的责任人
       this.checkedList = arrList;
       //this.project_execute_dept_name = checkStr;
-    },
-    /** 表单保存 */
-    saveFormData() {
-      let stateId = this.$parent.$parent.$parent.getStateObj(this.state).id;
-      let about_dept = [];
-      about_dept = about_dept.concat(this.formData.biz_about_dept_name_ids);
-      about_dept = about_dept.concat(this.formData.biz_comp_dept_name_ids);
-      about_dept = about_dept.concat(
-        this.formData.project_execute_dept_name_ids
-      );
-      about_dept = about_dept.concat(this.formData.provider_name_ids);
-      let param = {
-        id: this.projectId,
-        project_id: this.formData.project_id,
-        state: stateId,
-        sign_date:
-          this.formData.sign_date === "" || this.formData.sign_date === null
-            ? ""
-            : this.appDateFormat(this.formData.sign_date, "yyyy-mm-dd"),
-        about_dept: about_dept,
-        contract_id: this.contract_id,
-        multi_contract: this.contractList.length > 1 ? "Y" : "N"
-      };
+    }
 
-      let obj = {};
-      obj.params = param;
-      obj.baseURL = "/itmsdrm";
-      obj.serviceRoot = "project/designReportSave";
-      this.$parent.$parent.$parent.toolLoading();
-      this.requestDrmService(obj, this)
-        .then(res => {
-          this.$parent.$parent.$parent.toolLoadClose();
-          let message = "";
-          let type = "info";
-          if (res.resultCode === "0") {
-            let result_data = JSON.parse(res.resultData);
-            if (result_data.flag) {
-              type = "success";
-              message = "操作成功！";
-              this.$parent.$parent.$parent.getChildrenFun();
-            } else {
-              this.state = "1";
-              type = "error";
-              message = "操作失败！";
-            }
-          } else {
-            type = "error";
-            message = "操作失败！";
-          }
-          this.$message({
-            message: message,
-            type: type
-          });
-        })
-        .catch(err => {
-          this.$parent.$parent.$parent.toolLoadClose();
-          this.state = "1";
-          this.$message({
-            message: "操作失败",
-            type: "error"
-          });
-        });
-    },
-    /** 验证合同是否可选 */
-    checkProjectSelect(_state) {
-      let obj = {};
-      obj.params = {
-        project_id: this.formData.project_id,
-        contract_code: this.formData.contract_code,
-        bill_type: this.billCode,
-        safe_type: "",
-        contract_id: this.contract_id,
-        state: this.state,
-        id: this.projectId
-      };
-      obj.baseURL = "/itmsdrm";
-      obj.serviceRoot = "project/checkOutContractGoOn";
-      let type = "warning";
-      let message = "操作失败！";
-      this.requestDrmService(obj, this)
-        .then(res => {
-          if (res.resultCode === "0") {
-            let result_data = JSON.parse(res.resultData).map;
-            message = result_data.msg;
-            if (result_data.flag) {
-              this.state = _state;
-              this.saveFormData();
-            } else {
-              // this.state = '1';
-              this.$message({
-                type: type,
-                message: message
-              });
-            }
-          } else {
-            // this.state = '1';
-            this.$message({
-              type: type,
-              message: message
-            });
-          }
-        })
-        .catch(err => {
-          // this.state = '1';
-          this.$message({
-            type: type,
-            message: message
-          });
-          console.log(err);
-        });
-    },
-    /** 保存 */
-    // onSubmit() {
-    //   // this.state = '1';
-    //   this.$refs.formRef.clearValidate();
-    //   this.checkProjectSelect("1");
-    // },
+
   }
 };
 </script>

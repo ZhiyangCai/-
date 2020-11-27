@@ -340,10 +340,12 @@ export default {
   methods: {
     /*------提交事件------*/
     onSubmit() {
+      //提交时选择责任人验证打开
       this.rules.project_execute_dept_name[0].required = true;
       this.showMessage = true;
       this.$refs.formRef.validate(valid => {
         if (valid) {
+          //判断是否填写工作项
           if (this.formData.letter_contents.length > 0) {
             var contents = this.formData.letter_contents;
             for (var i = 0; i < contents.length; i++) {
@@ -361,9 +363,9 @@ export default {
           var date = this.moment(this.formData.limited_time).format(
             "YYYY-MM-DD HH:mm:ss"
           );
-          this.formData.limited_time = date;
+          this.formData.limited_time = date; //限定完成时间
 
-          let checkedList = this.checkedList; //责任人
+          let checkedList = this.checkedList; //选择的责任人
           if (checkedList.length > 0) {
             for (var i = 0; i < checkedList.length; i++) {
               this.formData.imple_uses.push(checkedList[i].user_id);
@@ -460,8 +462,12 @@ export default {
               this.formData.imple_depart = "";
               this.formData.letter_contents = [];
               this.showMessage = false;
+              //提交成功以后责任人选择验证关闭
               this.rules.project_execute_dept_name[0].required = false;
+              //刷新页面
               this.$parent.$parent.$parent.timer = new Date().getTime();
+              //提交成功后跳转到历史记录页面
+              this.$parent.$parent.$parent.activeName = "project_2";
               console.log("提交成功：----", res);
             })
             .catch(err => {
@@ -478,10 +484,12 @@ export default {
 
     /*------保存事件-----*/
     onSave() {
+      //保存以后责任人选择验证打开
       this.rules.project_execute_dept_name[0].required = true;
       this.showMessage = true;
       this.$refs.formRef.validate(valid => {
         if (valid) {
+          //判断是否填写工作项
           if (this.formData.letter_contents.length > 0) {
             var contents = this.formData.letter_contents;
             for (var i = 0; i < contents.length; i++) {
@@ -499,7 +507,7 @@ export default {
           var date = this.moment(this.formData.limited_time).format(
             "YYYY-MM-DD HH:mm:ss"
           );
-          this.formData.limited_time = date;
+          this.formData.limited_time = date; //限定完成时间
           let checkedList = this.checkedList; //责任人
           if (checkedList.length > 0) {
             for (var i = 0; i < checkedList.length; i++) {
@@ -560,8 +568,12 @@ export default {
               this.formData.imple_depart = "";
               this.formData.letter_contents = [];
               this.showMessage = false;
+              //保存成功以后责任人选择验证关闭
               this.rules.project_execute_dept_name[0].required = false;
+              //刷新页面
               this.$parent.$parent.$parent.timer = new Date().getTime();
+              //保存成功后跳转到历史记录页面
+              this.$parent.$parent.$parent.activeName = "project_2";
               console.log("保存成功：----", res);
             })
             .catch(err => {
@@ -575,7 +587,7 @@ export default {
         }
       });
     },
-    //增加一行表格
+    //增加一行表格（工作项内容）
     handleAddDetails() {
       if (this.formData.letter_contents == undefined) {
         this.formData.letter_contents = new Array();
@@ -587,7 +599,7 @@ export default {
       this.formData.letter_contents.push(obj);
       //}
     },
-    //删除选中的表格
+    //删除选中的表格（工作项内容）
     handleDeleteDetails() {
       if (this.multipleSelection.length === 0) {
         this.$alert("请先选择要删除的数据", "提示", {
@@ -607,7 +619,7 @@ export default {
         //this.tableData.splice(this.multipleSelection[0].xh - 1, 1);
       }
     },
-    //点击复选框的事件
+    //点击复选框的事件（工作项内容）
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },

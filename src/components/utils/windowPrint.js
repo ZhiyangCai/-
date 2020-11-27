@@ -41,7 +41,7 @@ Print.prototype = {
     var inputs = document.querySelectorAll('input');
     var textareas = document.querySelectorAll('textarea');
     var selects = document.querySelectorAll('select');
-
+ 
     for (var k = 0; k < inputs.length; k++) {
       if (inputs[k].type == "checkbox" || inputs[k].type == "radio") {
         if (inputs[k].checked == true) {

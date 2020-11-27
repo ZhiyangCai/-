@@ -81,8 +81,12 @@
               align="center"
             >
               <template slot-scope="scope">
+                <!-- 注：所有情况都显示查看按钮
+                  （1）草稿0----显示（查看，删除）按钮，
+                  （2）已回复2----显示（查看，重新发起，归档，打印）按钮，
+                  （3）归档3----显示（查看，打印，已归档）按钮
+                  （4）处理中1----显示（查看）按钮 -->
                 <div style="white-space:nowrap;">
-                  <!-- 测试 -->
                   <el-button
                     style="margin:5px;"
                     @click="handleClick(scope.row, '查看')"
@@ -269,10 +273,7 @@ export default {
       searchFormInline: {
         letter_status: "", //状态
         letter_name: "", //输入框条件
-
         // bill_type: "", //评审类型
-        // start_date: "", //选择周期 开始日期
-        // end_date: "", //选择周期 结束日期
         page: 1, //table 分页pageNo
         rows: 10 //table 分页pageSize
       },
@@ -288,9 +289,7 @@ export default {
     }
   },
   mounted() {
-    //加载表头和表格数据
-    //document.querySelector(".el-tabs__nav-scroll").style.display = "none";
-
+    //初始化加载表头和表格数据
     this.getTableHeader();
     this.getProjectList();
 
