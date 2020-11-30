@@ -28,7 +28,7 @@ export default {
           //baseUrl = '/mock/52/kjy-work-letter'
           //baseUrl = '/wxdsm/services'
            //baseUrl = 'https://weixintest.hbtobacco.cn'
-          // baseUrl = 'http://10.156.5.12:9080'//接口地址
+          // baseUrl = 'http://10.156.5.12:9080'
           
         } else if (this.isNormal === 'false') {//测试环境
           //baseUrl = '/bpi'
