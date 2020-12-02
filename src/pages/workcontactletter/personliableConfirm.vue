@@ -80,17 +80,6 @@
             </el-col>
           </el-row>
 
-          <el-row style="padding-top: 30px;display:none">
-            <el-col :span="24" style="text-align: right;padding-top:8px;">
-              <el-button size="mini" type="primary" @click="handleAddDetails"
-                >增加
-              </el-button>
-              <el-button size="mini" type="warning" @click="handleDeleteDetails"
-                >删除
-              </el-button>
-            </el-col>
-          </el-row>
-
           <div
             class="func_list_item_"
             style="margin-top:10px;margin-bottom:10px"
@@ -104,15 +93,8 @@
                 tooltip-effect="dark"
                 style="width: 100%"
                 :disabled="isReadonly"
-                @selection-change="handleSelectionChange"
+              
               >
-                <!-- <el-table-column
-                  header-align="center"
-                  align="center"
-                  type="selection"
-                  width="55"
-                > -->
-                </el-table-column>
 
                 <el-table-column
                   header-align="center"
@@ -366,9 +348,7 @@ export default {
       isCheckBtn: false, //是否多选
       checkedList: [], //已选人员
 
-      state: "1", //表单状态
       projectTitle: "", //表单抬头
-      projectCode: "", //表单编码
       isReadonly: true, 
       //uploadUrl: "transfer/api/dsm/file/upload", //上传url
       //uploadUrl: "https://weixin.hbtobacco.cn/financeTransport/wechat/file/upload", //上传url
@@ -382,33 +362,11 @@ export default {
         limited_time: "", //限定完成时间
         imple_uses: [], //责任人
         imple_depart: "", //责任部门
-        file_list:[],
-
-        /** 项目基本信息 */
-        project_id: "", //项目id
-        project_id1: "", //项目id
-        project_name: "", //项目名称
-        project_code: "", //项目编码
-        contract_id: "", //合同id
-        contract_name: "", //合同名称
-        contract_code: "", //合同编码
-        sign_date: "", //签字日期
+        file_list:[],//附件列表
 
         /** 确认人信息 */
         project_execute_dept_name: "", //项目执行部门/负责人
         project_execute_dept_name_ids: [], //项目执行部门/负责人数组
-        biz_comp_dept_name: "", //业务主管部门/负责人
-        biz_comp_dept_name_ids: [], //业务主管部门/负责人数组
-        biz_about_dept_name: "", //相关业务部门/负责人
-        biz_about_dept_name_ids: [], //相关业务部门/负责人数组
-        provider_name: "", //供应商项目经理
-        provider_name_ids: [], //供应商项目经理人员数组
-
-        /** 附件 */
-        file_list_attach1: [], //附件-设计报告
-        file_list_attach2: [], //附件-设计评审报告
-        file_list_attach3: [], //附件-其它文档
-        upload_list_attach: [] //正在选择的上传文件
       },
       /** 表单校验 */
       rules: {
@@ -474,99 +432,12 @@ export default {
             required: false,
             message: "请选择责任人"
           }
-        ],
-        //--------------------------------分隔符------------------------------------
-        project_name: [
-          {
-            required: false,
-            message: "请选择项目名称"
-          }
-        ],
-        project_code: [
-          {
-            required: false,
-            message: "请选择项目编号"
-          }
-        ],
-        contract_id: [
-          {
-            required: false,
-            message: "请选择合同名称"
-          }
-        ],
-        contract_code: [
-          {
-            required: false,
-            message: "请在合同名称重新选择合同"
-          }
-        ],
-        // project_execute_dept_name: [
-        //   {
-        //     required: false,
-        //     message: "请选择项目执行部门/负责人"
-        //   }
-        // ],
-        biz_comp_dept_name: [
-          {
-            required: false,
-            message: "请选择业务主管部门/负责人"
-          }
-        ],
-        provider_name: [
-          {
-            required: false,
-            message: "请选择供应商项目经理"
-          }
-        ],
-        sign_date: [
-          {
-            required: false,
-            message: "请选择签字日期"
-          }
-        ],
-        file_list_attach1: [
-          {
-            required: false,
-            message: "请上传设计评审报告"
-          }
-        ],
-        file_list_attach2: [
-          {
-            required: false,
-            message: "请上传设计报告"
-          }
         ]
+        //--------------------------------分隔符------------------------------------
       }
     };
   },
   watch: {
-    state(val) {
-      if (val !== "1") {
-        this.isReadonly = true;
-      }
-    },
-    contract_id(val) {
-      this.formData.contract_id = val;
-      if (this.contractSelect) {
-        return;
-      }
-      this.contractList.map(el => {
-        if (el.id === val) {
-          this.formData.contract_code = el.contract_code;
-          this.formData.contract_name = el.contract_name;
-          this.formData.supplier = el.supplier_name || "";
-        }
-      });
-      if (
-        this.formData.contract_code === "" ||
-        this.formData.contract_code === null
-      ) {
-        this.$message({
-          type: "warning",
-          message: "合同编号不能为空！请先到ITME系统中维护合同编号！"
-        });
-      }
-    }
   },
   mounted() {
     /*路由传参(还需要userCode)*/
@@ -575,10 +446,6 @@ export default {
     this.letter_principal_id = this.$route.query.letter_principal_id;
 
     this.projectTitle = "黄鹤楼科技园工程中心"; //this.$parent.$parent.$parent.projectTitle;
-    // this.projectCode = this.$parent.$parent.$parent.getProjectCode(
-    //   this.billCode
-    // ).label;
-    
 
     this.getFormData();
    
@@ -844,44 +711,6 @@ export default {
             });
     },
 
-
-    //增加一行表格
-    handleAddDetails() {
-      if (this.formData.letter_contents == undefined) {
-        this.formData.letter_contents = new Array();
-      }
-      let obj = {};
-      obj.id = this.formData.letter_contents.length + 1;
-      obj.name = "";
-      //if ((obj, name.trim() && obj.name.trim() !== "")) {
-      this.formData.letter_contents.push(obj);
-      //}
-    },
-    //删除选中的表格
-    handleDeleteDetails() {
-      if (this.multipleSelection.length === 0) {
-        this.$alert("请先选择要删除的数据", "提示", {
-          confirmButtonText: "确定"
-        });
-      } else {
-        for (var i = 0; i < this.multipleSelection.length; i++) {
-          for (var j = 0; j < this.formData.letter_contents.length; j++) {
-            if (
-              this.multipleSelection[i].id ===
-              this.formData.letter_contents[j].id
-            ) {
-              this.formData.letter_contents.splice(j, 1);
-            }
-          }
-        }
-        //this.tableData.splice(this.multipleSelection[0].xh - 1, 1);
-      }
-    },
-    //点击复选框的事件
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-
     /** 根据表单id 获取表单信息 */
     getFormData() {
       let obj = {};
@@ -922,43 +751,7 @@ export default {
             this.formData.project_execute_dept_name = result_data.rows[0].pname;
             this.formData.letter_contents = result_data.rows[0].content_list;
             this.formData.file_list = result_data.rows[0].file_list;
-
             /**/
-            /**/
-            /**/
-            /**/
-            /**/
-            /**/
-            this.formData.project_id = result_data.project_id;
-            this.formData.project_code = result_data.project_code;
-            this.formData.project_name = result_data.project_name;
-            if (
-              this.formData.project_code === "" ||
-              this.formData.project_code === null
-            ) {
-              this.formData.project_id1 = "";
-            } else {
-              this.formData.project_id1 = result_data.project_id;
-            }
-            this.formData.sign_date = result_data.sign_date;
-
-            this.formData.contract_code = result_data.contract_code;
-            this.formData.contract_name = result_data.contract_name;
-
-            result_data.attach.map(el => {
-              el.name = el.file_name;
-              el.status = "success";
-              if (el.upload_type === "doc02") {
-                el.prop = "attach1";
-                this.formData["file_list_" + el.prop].push(el);
-              } else if (el.upload_type === "doc01") {
-                el.prop = "attach2";
-                this.formData["file_list_" + el.prop].push(el);
-              } else if (el.upload_type === "doc08") {
-                el.prop = "attach3";
-                this.formData["file_list_" + el.prop].push(el);
-              }
-            });
           }
         })
         .catch(err => {
@@ -1222,9 +1015,6 @@ export default {
       let arrList = [];
       let typeList = {
         project_execute_dept_name: "3",
-        biz_comp_dept_name: "1",
-        biz_about_dept_name: "2",
-        provider_name: "4"
       };
 
       if (checkList.length === 0) {

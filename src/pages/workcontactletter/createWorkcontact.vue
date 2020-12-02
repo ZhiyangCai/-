@@ -272,7 +272,7 @@ export default {
         ],
         letter_contents: [
           {
-            type: "array",
+            //type: "array",
             required: true,
             message: "请填写工作事项",
             trigger: "blur"

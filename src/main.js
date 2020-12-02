@@ -66,7 +66,6 @@ import axios from 'axios'
 
 //axios.defaults.baseURL = 'http://10.156.5.12:9080';
 //axios.defaults.baseURL = 'https://weixin.hbtobacco.cn'
-//axios.defaults.baseURL = 'https://weixin.hbtobacco.cn'
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 Vue.prototype.$axios = axios;
 
@@ -133,7 +132,6 @@ new Vue({
     return {}
   },
   mounted() {
-    
     //if (this.GLOBAL.isNormal === 'true') {
       // if (this.$route.query.userCode) {
       //   sessionStorage.setItem('userCode', this.$route.query.userCode);
@@ -170,7 +168,7 @@ new Vue({
       //  sessionStorage.setItem('userName', this.$route.query.userName);
       //  this.GLOBAL.userName = sessionStorage.getItem('蔡志洋');
 
-       //  sessionStorage.setItem('userCode', '99102117');
+       //  sessionStorage.setItem('userCode', '99101627');
       //  this.GLOBAL.userCode = sessionStorage.getItem('userCode');
       //  sessionStorage.setItem('userName', this.$route.query.userName);
       //  this.GLOBAL.userName = sessionStorage.getItem('杜博');

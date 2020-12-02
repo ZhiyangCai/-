@@ -22,8 +22,8 @@ const fileDownloadUrlTest = 'http://10.156.5.145:8083/transfer/business/file/dow
 const httpFormalUrl = 'https://portal.hbtobacco.cn/';
 const fileDownloadUrlFormal = 'https://portal.hbtobacco.cn/transfer/business/file/download';
 
- const isNormal = 'false'; //测试环境
-//const isNormal = 'true'; //正式环境
+// const isNormal = 'false'; //测试环境
+const isNormal = 'true'; //正式环境
 
 // const wxNormal = 'true';//企业微信包
 const wxNormal = 'false'; //非企业微信包

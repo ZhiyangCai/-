@@ -25,18 +25,13 @@ export default {
       if (process.env.NODE_ENV === 'development') {//开发环境
         if (this.isNormal === 'true') {//正式环境
           baseUrl = '/api'
-          //baseUrl = '/mock/52/kjy-work-letter'
-          //baseUrl = '/wxdsm/services'
-           //baseUrl = 'https://weixintest.hbtobacco.cn'
-          // baseUrl = 'http://10.156.5.12:9080'
           
         } else if (this.isNormal === 'false') {//测试环境
-          //baseUrl = '/bpi'
-           baseUrl = 'https://weixintest.hbtobacco.cn'
-
+          baseUrl = '/bpi'
+           //baseUrl = 'https://weixintest.hbtobacco.cn'
         }
       } else {//生产环境 
-        baseUrl = ''
+        baseUrl = this.GLOBAL.httpUrl
       }
     console.log("url:-------"+baseUrl + that.GLOBAL.serviceDsmPort + '/' + obj.serviceRoot);
     return new Promise((resolve, reject) => {

@@ -53,7 +53,8 @@ const defaultRouter = [{
       /** 如果为正式环境和生产环境时 需执行用户信息接口 */
       if (isNormal && isNormal === 'true' && process.env.NODE_ENV !== 'development') {
         checkLogin(next)
-      } else {
+      }
+      else {
         next();
       }
     },
